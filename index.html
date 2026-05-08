@@ -52,7 +52,7 @@
             display: none;
             flex: 1;
             padding: 20px;
-            padding-bottom: 80px; /* Space for bottom nav */
+            padding-bottom: 80px;
             animation: fadeIn 0.3s ease;
         }
 
@@ -216,13 +216,6 @@
             color: var(--bright-yellow);
         }
         .warning-text { color: var(--bright-yellow); font-size: 12px; margin-bottom: 15px; background: rgba(255,215,0,0.1); padding: 10px; border-radius: 5px;}
-
-        /* Gallery */
-        .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .gallery-img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid var(--dark-green-light); }
-
-        /* Recaptcha container for Firebase */
-        #recaptcha-container { margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -314,8 +307,6 @@
             </div>
         </div>
 
-        <div id="recaptcha-container"></div>
-
         <button class="btn" onclick="appLogic.register()">Create Account</button>
         
         <p class="switch-link" onclick="appLogic.switchAuthView('login')">Already have an account? <span>Login here</span></p>
@@ -402,18 +393,6 @@
         </div>
     </div>
 
-    <div id="gallery-view" class="view">
-        <h2 class="text-center">Our Stations</h2>
-        <p class="text-center" style="color: var(--text-gray); margin-bottom: 20px;">Real energy infrastructure</p>
-        
-        <div class="gallery-grid">
-            <img src="https://images.unsplash.com/photo-1593941707882-a5bba14938cb?auto=format&fit=crop&w=400&q=80" alt="Station" class="gallery-img">
-            <img src="https://images.unsplash.com/photo-1620803517172-8884de6e246a?auto=format&fit=crop&w=400&q=80" alt="Station" class="gallery-img">
-            <img src="https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?auto=format&fit=crop&w=400&q=80" alt="Station" class="gallery-img">
-            <img src="https://images.unsplash.com/photo-1605335198889-f538eec7de70?auto=format&fit=crop&w=400&q=80" alt="Station" class="gallery-img">
-        </div>
-    </div>
-
     <nav id="bottom-nav" style="display: none;">
         <div class="nav-item active" onclick="appLogic.navTo('profile')">
             <i class="fas fa-user"></i>
@@ -430,10 +409,6 @@
         <div class="nav-item" onclick="appLogic.navTo('affiliate')">
             <i class="fas fa-network-wired"></i>
             Affiliate
-        </div>
-        <div class="nav-item" onclick="appLogic.navTo('gallery')">
-            <i class="fas fa-images"></i>
-            Gallery
         </div>
     </nav>
 
@@ -469,33 +444,28 @@
 </div>
 
 <script type="module">
+    // ВАЖНО: Тук добавихме Realtime Database вместо Firestore
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-    import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
 
-    // Firebase Configuration from user
     const firebaseConfig = {
         apiKey: "AIzaSyBMktDAVXxUgLbCyBiL9c_l6FDWQ8yqADc",
         authDomain: "energyonemilions.firebaseapp.com",
+        databaseURL: "https://energyonemilions-default-rtdb.europe-west1.firebasedatabase.app",
         projectId: "energyonemilions",
         storageBucket: "energyonemilions.firebasestorage.app",
         messagingSenderId: "1084198944849",
         appId: "1:1084198944849:web:57fc342554a08ed1dd3870"
     };
 
-    // Initialize Firebase
+    // Инициализация на Firebase
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db = getDatabase(app);
 
-    // Make references available globally for the appLogic
-    window.firebaseAuth = auth;
+    // Правим функциите достъпни за основния скрипт по-долу
     window.firebaseDb = db;
-    window.firebaseSetDoc = setDoc;
-    window.firebaseGetDoc = getDoc;
-    window.firebaseDoc = doc;
-    window.firebaseCreateUser = createUserWithEmailAndPassword; // Using email/pass simulation for seamless demo if SMS fails
-    window.firebaseSignIn = signInWithEmailAndPassword;
+    window.firebaseRef = ref;
+    window.firebaseSet = set;
 </script>
 
 <script>
@@ -515,28 +485,22 @@
 
         init() {
             this.renderPackages();
-            // Check if already logged in (Mock check for demo)
             if(localStorage.getItem('isLoggedIn') === 'true') {
                 this.loadUserData();
                 this.showMainApp();
             }
         },
 
-        // Navigation
         switchAuthView(viewName) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(`${viewName}-view`).classList.add('active');
         },
 
         navTo(tabName) {
-            // Hide all views
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            // Remove active class from nav icons
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             
-            // Show selected view
             document.getElementById(`${tabName}-view`).classList.add('active');
-            // Highlight selected nav icon
             event.currentTarget.classList.add('active');
         },
 
@@ -545,12 +509,10 @@
             document.getElementById('register-view').classList.remove('active');
             document.getElementById('bottom-nav').style.display = 'flex';
             
-            // Default to profile
             document.getElementById('profile-view').classList.add('active');
             document.querySelectorAll('.nav-item')[0].classList.add('active');
         },
 
-        // Render Packages dynamically
         renderPackages() {
             const container = document.getElementById('packages-container');
             container.innerHTML = '';
@@ -570,7 +532,6 @@
             });
         },
 
-        // Auth Logic
         validatePassword(password) {
             if(password.length < 6 || password.length > 12) {
                 alert("Password must be between 6 and 12 characters.");
@@ -595,23 +556,35 @@
             if(!this.validatePassword(password)) return;
 
             const fullPhone = countryCode + phone;
+            const generatedCode = 'EN' + Math.floor(Math.random()*9000 + 1000);
+            const newUid = Math.floor(Math.random() * 900000 + 100000).toString();
             
             try {
-                // For demonstration, simulating registration success.
-                // In production with Firebase, you map Phone to a Custom Auth or Email mock:
-                // const userCred = await window.firebaseCreateUser(window.firebaseAuth, phone+"@energy.app", password);
+                // Изпращане на данните към Firebase Realtime Database
+                const userRef = window.firebaseRef(window.firebaseDb, 'users/' + newUid);
+                await window.firebaseSet(userRef, {
+                    fullName: name,
+                    phone: fullPhone,
+                    inviteCodeUsed: inviteCode || "none",
+                    myCode: generatedCode,
+                    password: password, // В реално приложение паролите се криптират!
+                    balance: 0,
+                    teamSize: 0,
+                    createdAt: new Date().toISOString()
+                });
                 
-                alert("Account created successfully!");
+                alert("Account created successfully and saved to Database!");
                 
-                // Save mock session
+                // Запазване локално за сесията
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('userPhone', fullPhone);
-                localStorage.setItem('myCode', 'EN' + Math.floor(Math.random()*9000 + 1000));
+                localStorage.setItem('myCode', generatedCode);
+                localStorage.setItem('uid', newUid);
                 
                 this.loadUserData();
                 this.showMainApp();
             } catch (error) {
-                alert("Error: " + error.message);
+                alert("Error connecting to database: " + error.message);
             }
         },
 
@@ -622,11 +595,12 @@
 
             if(!phone || !password) return alert("Please enter phone and password");
 
-            // Mock login success
+            // Mock login - за да работи демото
             localStorage.setItem('isLoggedIn', 'true');
             if(!localStorage.getItem('userPhone')) {
                 localStorage.setItem('userPhone', countryCode + phone);
                 localStorage.setItem('myCode', 'EN1029');
+                localStorage.setItem('uid', '102938');
             }
             
             this.loadUserData();
@@ -635,20 +609,20 @@
 
         logout() {
             localStorage.removeItem('isLoggedIn');
-            location.reload(); // Reload resets the app state
+            location.reload();
         },
 
         loadUserData() {
             const phone = localStorage.getItem('userPhone') || '+359 871234567';
             const code = localStorage.getItem('myCode') || 'ENERGY99';
+            const uid = localStorage.getItem('uid') || '102938';
             
             document.getElementById('display-phone').innerText = this.maskPhone(phone);
             document.getElementById('display-my-code').innerText = code;
             document.getElementById('affiliate-code-display').innerText = code;
-            document.getElementById('display-uid').innerText = Math.floor(Math.random() * 900000 + 100000);
+            document.getElementById('display-uid').innerText = uid;
         },
 
-        // Wallet Logic
         withdraw() {
             const balance = parseFloat(document.getElementById('wallet-balance').innerText);
             if(balance < 100) {
@@ -658,7 +632,6 @@
             }
         },
 
-        // Modal Logic
         openPaymentModal(pkgName, price) {
             document.getElementById('modal-pkg-name').innerText = `${pkgName} - ${price} USDT`;
             document.getElementById('payment-modal').style.display = 'flex';
@@ -686,7 +659,6 @@
         }
     };
 
-    // Initialize App
     window.onload = () => appLogic.init();
 
 </script>
