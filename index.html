@@ -2,310 +2,330 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invest In Energy | ⚡</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>INVEST IN ENERGY | Premium Platform</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
-        /* Custom Theme Colors */
         :root {
-            --dark-green: #062c1d;
-            --light-green: #0a402d;
-            --neon-yellow: #facc15;
-            --text-gray: #94a3b8;
+            --primary-yellow: #facc15;
+            --deep-green: #041d13;
+            --accent-green: #063d27;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(250, 204, 21, 0.2);
         }
 
         body {
-            background-color: var(--dark-green);
-            color: white;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            overflow-x: hidden;
+            background-color: var(--deep-green);
+            color: #e2e8f0;
+            font-family: 'Rajdhani', sans-serif;
             margin: 0;
-            padding-bottom: 80px; /* Space for bottom nav */
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Animations */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        h1, h2, h3, .font-special {
+            font-family: 'Orbitron', sans-serif;
         }
 
-        .animate-fade-up { animation: fadeUp 0.5s ease forwards; }
+        /* Премиум Градиенти */
+        .bg-gradient-main {
+            background: radial-gradient(circle at top right, #084d32, #041d13);
+        }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--dark-green); }
-        ::-webkit-scrollbar-thumb { background: var(--neon-yellow); border-radius: 10px; }
-
-        /* Glassmorphism */
-        .glass-card {
-            background: rgba(10, 64, 45, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(250, 204, 21, 0.1);
-            border-radius: 20px;
+        /* Glassmorphism Ефекти */
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
         }
 
         .yellow-glow {
-            box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
+            box-shadow: 0 0 20px rgba(250, 204, 21, 0.15);
         }
 
-        .nav-item.active {
-            color: var(--neon-yellow);
+        /* Анимации */
+        @keyframes pulse-yellow {
+            0% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(250, 204, 21, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
         }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--neon-yellow) !important;
+        .active-pulse {
+            animation: pulse-yellow 2s infinite;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Стилизиране на Инпути */
+        input, select {
+            background: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary-yellow) !important;
             box-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
         }
 
-        .package-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
+        /* Навигация */
+        .nav-link {
+            color: #64748b;
+            transition: all 0.3s;
         }
 
-        /* Hide sections by default */
+        .nav-link.active {
+            color: var(--primary-yellow);
+            text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+        }
+
+        /* Скриване на секции */
         .page-section { display: none; }
-        .page-section.active { display: block; animation: fadeUp 0.4s ease; }
+        .page-section.active { display: block; }
+
+        /* Специален бутон */
+        .btn-premium {
+            background: linear-gradient(90deg, #facc15, #eab308);
+            color: #041d13;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-premium:active {
+            transform: scale(0.95);
+        }
 
         /* Loader */
-        #loader {
+        #preloader {
             position: fixed;
             inset: 0;
-            background: var(--dark-green);
-            z-index: 9999;
+            background: #041d13;
+            z-index: 10000;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
+
+        .crypto-loader {
+            width: 80px;
+            height: 80px;
+            border: 4px solid var(--accent-green);
+            border-top: 4px solid var(--primary-yellow);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
+<body class="bg-gradient-main text-slate-200 min-h-screen">
 
-    <div id="loader">
-        <div class="flex flex-col items-center">
-            <div class="text-6xl animate-bounce">⚡</div>
-            <p class="text-yellow-400 mt-4 font-bold tracking-tighter">ENERGY LOADING...</p>
-        </div>
+    <div id="preloader">
+        <div class="crypto-loader"></div>
+        <h2 class="mt-6 font-special text-yellow-400 tracking-[5px] animate-pulse">ENERGY</h2>
     </div>
 
-    <div id="app" class="max-w-md mx-auto min-h-screen relative">
+    <div id="app-container" class="max-w-md mx-auto relative min-h-screen pb-24">
 
-        <section id="auth-section" class="page-section active p-6 min-h-screen flex flex-col justify-center">
-            <div class="text-center mb-10">
-                <h1 class="text-4xl font-black text-yellow-400 italic uppercase">Invest In Energy</h1>
-                <div class="text-5xl my-4">⚡</div>
+        <section id="section-auth" class="page-section active p-6 min-h-screen flex flex-col justify-center">
+            <div class="text-center mb-12">
+                <h1 class="text-3xl font-black italic tracking-tighter text-yellow-400">INVEST IN ENERGY</h1>
+                <div class="inline-block mt-4 p-4 rounded-full bg-yellow-400/10 active-pulse">
+                    <span class="text-5xl">⚡</span>
+                </div>
             </div>
 
-            <div class="glass-card p-6 yellow-glow">
-                <div class="flex border-b border-gray-700 mb-6">
-                    <button onclick="toggleAuth('login')" id="login-tab" class="w-1/2 py-3 text-yellow-400 border-b-2 border-yellow-400 font-bold">ВХОД</button>
-                    <button onclick="toggleAuth('register')" id="register-tab" class="w-1/2 py-3 text-gray-500 font-bold">РЕГИСТРАЦИЯ</button>
+            <div class="glass-panel p-8 yellow-glow">
+                <div class="flex mb-8 bg-black/40 p-1 rounded-xl">
+                    <button onclick="switchAuth('login')" id="btn-tab-login" class="flex-1 py-3 rounded-lg font-bold text-yellow-400 bg-white/5">ВЛИЗАНЕ</button>
+                    <button onclick="switchAuth('register')" id="btn-tab-reg" class="flex-1 py-3 rounded-lg font-bold text-slate-500">РЕГИСТРАЦИЯ</button>
                 </div>
 
-                <div id="login-form">
-                    <div class="mb-4">
-                        <label class="text-xs text-yellow-400 uppercase font-bold ml-1">Телефонен номер</label>
-                        <input type="tel" id="login-phone" placeholder="08XXXXXXXX" class="w-full bg-[#062c1d] border border-gray-700 p-4 rounded-xl mt-1">
+                <div id="form-login" class="fade-in">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-[10px] uppercase tracking-widest text-slate-400 ml-1">Телефонен номер</label>
+                            <input type="tel" id="login-phone" placeholder="08XXXXXXXX" class="w-full p-4 rounded-xl mt-1 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] uppercase tracking-widest text-slate-400 ml-1">Лична Парола</label>
+                            <input type="password" id="login-pass" placeholder="••••••••" class="w-full p-4 rounded-xl mt-1 outline-none">
+                        </div>
+                        <button onclick="onLogin()" class="btn-premium w-full py-5 rounded-xl mt-4 shadow-lg">Влез в акаунта</button>
                     </div>
-                    <div class="mb-6">
-                        <label class="text-xs text-yellow-400 uppercase font-bold ml-1">Парола</label>
-                        <input type="password" id="login-pass" placeholder="******" class="w-full bg-[#062c1d] border border-gray-700 p-4 rounded-xl mt-1">
-                    </div>
-                    <button onclick="handleLogin()" class="w-full bg-yellow-400 text-black font-black py-4 rounded-xl hover:bg-yellow-500 transition-all uppercase">Влез в системата</button>
                 </div>
 
-                <div id="register-form" class="hidden">
-                    <div class="mb-4">
-                        <input type="text" id="reg-name" placeholder="Вашето Име" class="w-full bg-[#062c1d] border border-gray-700 p-4 rounded-xl">
+                <div id="form-register" class="hidden fade-in">
+                    <div class="space-y-3">
+                        <input type="text" id="reg-name" placeholder="Пълно име" class="w-full p-4 rounded-xl outline-none">
+                        
+                        <div class="flex gap-2">
+                            <select id="reg-code" class="w-1/3 p-4 rounded-xl outline-none text-xs">
+                                <option value="+359">BG +359</option>
+                                <option value="+44">UK +44</option>
+                                <option value="+49">DE +49</option>
+                                <option value="+90">TR +90</option>
+                            </select>
+                            <input type="tel" id="reg-phone" placeholder="Телефон" class="w-2/3 p-4 rounded-xl outline-none">
+                        </div>
+
+                        <input type="text" id="reg-invite" placeholder="Код за покана" class="w-full p-4 rounded-xl outline-none border-dashed border-yellow-400/50">
+                        <input type="password" id="reg-pass" placeholder="Парола (6-12 знака)" class="w-full p-4 rounded-xl outline-none">
+                        
+                        <button onclick="onRegister()" class="btn-premium w-full py-5 rounded-xl mt-4 shadow-lg">Създай профил</button>
                     </div>
-                    <div class="flex gap-2 mb-4">
-                        <select id="reg-country" class="w-1/3 bg-[#062c1d] border border-gray-700 p-4 rounded-xl text-sm">
-                            <option value="+359">BG +359</option>
-                            <option value="+44">UK +44</option>
-                            <option value="+49">DE +49</option>
-                        </select>
-                        <input type="tel" id="reg-phone" placeholder="Телефон" class="w-2/3 bg-[#062c1d] border border-gray-700 p-4 rounded-xl">
-                    </div>
-                    <div class="mb-4">
-                        <input type="text" id="reg-invite" placeholder="Код за покана (задължителен)" class="w-full bg-[#062c1d] border border-gray-700 p-4 rounded-xl">
-                    </div>
-                    <div class="mb-6">
-                        <input type="password" id="reg-pass" placeholder="Парола (6-12 символа)" class="w-full bg-[#062c1d] border border-gray-700 p-4 rounded-xl">
-                    </div>
-                    <button onclick="handleRegister()" class="w-full bg-yellow-400 text-black font-black py-4 rounded-xl hover:bg-yellow-500 transition-all uppercase">Създай Акаунт</button>
                 </div>
             </div>
         </section>
 
-        <section id="dashboard-section" class="page-section p-6">
-            <header class="flex justify-between items-center mb-8">
+        <section id="section-home" class="page-section p-6 fade-in">
+            <div class="flex justify-between items-center mb-8">
                 <div>
-                    <p class="text-gray-400 text-sm">Добре дошли,</p>
-                    <h2 id="user-display-phone" class="text-xl font-bold text-yellow-400 italic">087****201</h2>
+                    <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[3px]">Добре дошли</h2>
+                    <p id="ui-phone" class="text-xl font-bold text-white tracking-tighter italic">087****201</p>
                 </div>
-                <button onclick="logout()" class="bg-red-500/20 text-red-500 p-2 rounded-lg text-sm italic">Изход</button>
-            </header>
+                <div class="flex gap-3">
+                    <div class="w-12 h-12 glass-panel flex items-center justify-center text-yellow-400">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <button onclick="logout()" class="text-red-400 text-xs font-bold bg-red-400/10 px-3 rounded-lg">ИЗХОД</button>
+                </div>
+            </div>
 
-            <div class="glass-card p-6 mb-6 border-l-4 border-yellow-400">
-                <div class="flex justify-between items-center">
+            <div class="glass-panel p-6 mb-8 relative overflow-hidden bg-gradient-to-br from-yellow-400/20 to-transparent">
+                <div class="flex justify-between items-start mb-4">
                     <div>
-                        <p class="text-xs uppercase text-gray-400 font-bold">Наличен Баланс</p>
-                        <h3 class="text-3xl font-black text-white mt-1"><span id="user-balance">0.00</span> <span class="text-yellow-400 text-lg">USDT</span></h3>
+                        <p class="text-[10px] uppercase font-bold text-yellow-400">Наличен Баланс</p>
+                        <h3 class="text-4xl font-black mt-1"><span id="ui-balance">0.00</span> <span class="text-lg text-yellow-400">USDT</span></h3>
                     </div>
-                    <div class="bg-yellow-400/10 p-4 rounded-full">
-                        <i class="fa-solid fa-wallet text-yellow-400 text-2xl"></i>
-                    </div>
+                    <i class="fa-solid fa-microchip text-4xl text-yellow-400/20"></i>
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="showSection('wallet')" class="flex-1 bg-white/10 py-3 rounded-xl font-bold text-xs uppercase hover:bg-white/20 transition">Теглене</button>
+                    <button onclick="showSection('shop')" class="flex-1 bg-yellow-400 text-black py-3 rounded-xl font-bold text-xs uppercase shadow-xl">Депозит</button>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="glass-card p-4 text-center">
-                    <p class="text-[10px] uppercase text-gray-400 mb-1">Поканени хора</p>
-                    <p id="ref-count" class="text-xl font-bold">0</p>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="glass-panel p-4">
+                    <p class="text-[10px] uppercase text-slate-500 font-bold mb-1">Екип</p>
+                    <p class="text-xl font-bold text-white"><span id="ui-ref-count">0</span> души</p>
                 </div>
-                <div class="glass-card p-4 text-center">
-                    <p class="text-[10px] uppercase text-gray-400 mb-1">Вашият Код</p>
-                    <p id="my-invite-code" class="text-xl font-bold text-yellow-400 tracking-widest">-----</p>
+                <div class="glass-panel p-4">
+                    <p class="text-[10px] uppercase text-slate-500 font-bold mb-1">Дневен Добив</p>
+                    <p class="text-xl font-bold text-green-400">+<span id="ui-daily">0.00</span></p>
                 </div>
             </div>
 
-            <h4 class="text-lg font-bold mb-4 uppercase italic">Активни пакети</h4>
-            <div id="active-investments-list" class="space-y-3">
-                <p class="text-sm text-gray-500 italic">Нямате активирани енергийни пакети...</p>
+            <div class="glass-panel p-5 flex justify-between items-center border-l-4 border-yellow-400">
+                <div>
+                    <p class="text-[10px] uppercase text-slate-400">Вашият поканителен код</p>
+                    <p id="ui-my-code" class="text-lg font-black tracking-[4px] text-yellow-400">------</p>
+                </div>
+                <button onclick="copyMyCode()" class="w-12 h-12 bg-yellow-400/10 rounded-full flex items-center justify-center text-yellow-400">
+                    <i class="fa-solid fa-copy"></i>
+                </button>
             </div>
         </section>
 
-        <section id="wallet-section" class="page-section p-6">
-            <h2 class="text-2xl font-black text-yellow-400 mb-6 uppercase italic tracking-tighter">Вашият Портфейл</h2>
+        <section id="section-shop" class="page-section p-6 fade-in">
+            <h2 class="text-2xl font-black italic uppercase text-yellow-400 mb-6">Енергийни Пакети</h2>
             
-            <div class="glass-card p-6 mb-8 text-center bg-gradient-to-br from-[#0a402d] to-[#062c1d]">
-                <p class="text-sm text-gray-400 mb-2 font-bold uppercase">Обща сума за теглене</p>
-                <h1 class="text-4xl font-black mb-6"><span id="wallet-balance-display">0.00</span> <span class="text-yellow-400">USDT</span></h1>
-                
-                <div class="flex flex-col gap-3">
-                    <input type="number" id="withdraw-amount" placeholder="Минимум 100 USDT" class="w-full bg-black/30 border border-gray-600 p-3 rounded-lg text-center">
-                    <button onclick="handleWithdraw()" class="w-full bg-white text-black font-bold py-3 rounded-lg uppercase">Поискай Теглене</button>
-                </div>
-                <p class="text-[10px] text-gray-500 mt-4 italic">* Тегленията се обработват до 24 часа.</p>
-            </div>
-
-            <h3 class="font-bold mb-4 flex items-center gap-2 italic uppercase">
-                <i class="fa-solid fa-clock-rotate-left text-yellow-400"></i> История на транзакциите
-            </h3>
-            <div id="transaction-history" class="space-y-3">
+            <div id="shop-list" class="space-y-6">
                 </div>
         </section>
 
-        <section id="shop-section" class="page-section p-6">
-            <div class="flex items-center gap-3 mb-6">
-                <i class="fa-solid fa-bolt-lightning text-yellow-400 text-2xl animate-pulse"></i>
-                <h2 class="text-2xl font-black uppercase italic">Energy Packages</h2>
-            </div>
-
-            <div id="packages-container" class="space-y-4">
-                </div>
-        </section>
-
-        <section id="affiliate-section" class="page-section p-6">
-            <div class="glass-card p-6 mb-6 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black">
-                <h3 class="text-xl font-black uppercase mb-1">Партньорска Програма</h3>
-                <p class="text-xs font-bold leading-tight">Печелете 10% от ежедневния доход на всеки регистриран чрез вас!</p>
-            </div>
-
-            <div class="space-y-4">
-                <div class="glass-card p-5">
-                    <p class="text-gray-400 text-xs uppercase font-bold mb-2">Вашата печалба от реферали</p>
-                    <h4 class="text-2xl font-black text-yellow-400"><span id="total-affiliate-earned">0.00</span> USDT</h4>
-                </div>
-                
-                <div class="glass-card p-5">
-                    <p class="text-gray-400 text-xs uppercase font-bold mb-2">Вашият линк за покана</p>
-                    <div class="flex items-center gap-2">
-                        <input type="text" id="share-link" readonly value="energy.app/ref=123" class="flex-1 bg-black/20 p-2 text-xs rounded border border-yellow-400/30">
-                        <button onclick="copyRefLink()" class="bg-yellow-400 text-black px-4 py-2 rounded font-bold text-xs">КОПИРАЙ</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-8">
-                <h4 class="font-bold mb-4 italic uppercase">Вашият екип</h4>
-                <div id="referral-list" class="space-y-2">
-                    <p class="text-sm text-gray-500 italic">Все още нямате активни реферали...</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="gallery-section" class="page-section p-6">
-            <h2 class="text-2xl font-black text-yellow-400 mb-6 uppercase italic">Нашите Станции</h2>
-            <p class="text-sm text-gray-400 mb-6 leading-relaxed italic">Ние инвестираме в бъдещето на мобилността. Ето част от реалните обекти, които генерират вашата печалба:</p>
+        <section id="section-wallet" class="page-section p-6 fade-in">
+            <h2 class="text-2xl font-black italic uppercase text-yellow-400 mb-6">Транзакции</h2>
             
-            <div class="grid grid-cols-1 gap-4">
-                <div class="glass-card overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=80&w=800" class="w-full h-48 object-cover">
-                    <div class="p-3 text-xs italic font-bold">Станция Сектор A1 - София Център</div>
+            <div class="glass-panel p-6 mb-8 text-center border-b-4 border-yellow-400">
+                <p class="text-xs font-bold text-slate-500 uppercase mb-2">Минимално теглене: 100 USDT</p>
+                <input type="number" id="withdraw-val" placeholder="0.00" class="w-full bg-transparent text-center text-3xl font-black py-4 mb-4 border-none outline-none">
+                <button onclick="onWithdraw()" class="btn-premium w-full py-4 rounded-xl">Поискай Теглене</button>
+            </div>
+
+            <h3 class="text-sm font-bold uppercase text-slate-500 mb-4 tracking-widest">История</h3>
+            <div id="wallet-history" class="space-y-3">
                 </div>
-                <div class="glass-card overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1620311319207-689366e74b34?auto=format&fit=crop&q=80&w=800" class="w-full h-48 object-cover">
-                    <div class="p-3 text-xs italic font-bold">Заряден Хъб B4 - Пловдив Изток</div>
+        </section>
+
+        <section id="section-gallery" class="page-section p-6 fade-in">
+            <h2 class="text-2xl font-black italic uppercase text-yellow-400 mb-6">Нашите Станции</h2>
+            <div class="space-y-6">
+                <div class="glass-panel overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=600" class="w-full h-48 object-cover">
+                    <div class="p-4"><p class="font-bold text-sm">Централен Хъб - Сектор 01</p></div>
                 </div>
-                <div class="glass-card overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=800" class="w-full h-48 object-cover">
-                    <div class="p-3 text-xs italic font-bold">Магистрален Хъб Тракия - 142км</div>
+                <div class="glass-panel overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1620311319207-689366e74b34?q=80&w=600" class="w-full h-48 object-cover">
+                    <div class="p-4"><p class="font-bold text-sm">Вятърен Парк "Енергия"</p></div>
                 </div>
             </div>
         </section>
 
-        <div id="payment-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-6">
-            <div class="glass-card p-6 w-full max-w-sm border-2 border-yellow-400 text-center animate-fade-up">
-                <button onclick="closePayment()" class="absolute top-4 right-4 text-2xl text-gray-500">&times;</button>
-                <h3 class="text-xl font-black text-yellow-400 mb-4 uppercase">Потвърждение</h3>
-                <p class="text-xs text-gray-300 mb-6">Изпратете точно сумата на адреса по-долу през мрежа <b class="text-white">ERC20 (Ethereum)</b>:</p>
+        <div id="modal-pay" class="fixed inset-0 bg-black/95 z-[500] hidden flex items-center justify-center p-6">
+            <div class="glass-panel p-8 w-full max-w-sm text-center border-yellow-400 border-2">
+                <h3 class="text-xl font-black text-yellow-400 mb-4">ДЕПОЗИТ USDT</h3>
+                <p class="text-[10px] text-slate-400 uppercase mb-4 font-bold">Използвайте мрежа: <span class="text-white">ERC20</span></p>
                 
-                <div id="qrcode" class="bg-white p-3 inline-block rounded-xl mb-4"></div>
+                <div id="pay-qr" class="bg-white p-2 inline-block rounded-lg mb-6"></div>
                 
-                <div class="bg-black/40 p-3 rounded-lg break-all text-[10px] font-mono text-yellow-400 mb-4">
+                <div class="bg-black/50 p-4 rounded-xl mb-6 select-all break-all text-[10px] font-mono text-yellow-400 border border-white/5">
                     0x0f66Ac0f0D07Af0b444FF687Fb888eD8868d9173
                 </div>
                 
-                <button onclick="copyWallet()" class="w-full bg-yellow-400 text-black font-black py-3 rounded-lg mb-2">КОПИРАЙ АДРЕСА</button>
-                <button onclick="submitDeposit()" class="w-full border border-yellow-400 py-3 rounded-lg text-sm">ВЕЧЕ ИЗПРАТИХ</button>
+                <button onclick="copyWalletAddr()" class="w-full bg-white/10 py-3 rounded-lg text-xs font-bold uppercase mb-2">Копирай Адрес</button>
+                <button onclick="closePayModal()" class="w-full py-3 text-slate-500 font-bold text-xs uppercase">Затвори</button>
             </div>
         </div>
 
-        <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#0a402d] border-t border-yellow-400/20 h-20 flex justify-around items-center z-40 px-2 rounded-t-3xl shadow-[0_-10px_20px_rgba(0,0,0,0.5)]">
-            <button onclick="showSection('dashboard')" class="nav-item flex flex-col items-center gap-1 active">
-                <i class="fa-solid fa-house text-lg"></i>
-                <span class="text-[10px] font-bold uppercase italic">Начало</span>
+        <nav id="main-nav" class="fixed bottom-0 left-0 right-0 max-w-md mx-auto h-20 bg-black/80 backdrop-blur-xl border-t border-white/10 flex justify-around items-center z-[400] rounded-t-3xl hidden">
+            <button onclick="showSection('home')" class="nav-link flex flex-col items-center gap-1 active">
+                <i class="fa-solid fa-house-chimney text-xl"></i>
+                <span class="text-[9px] font-bold uppercase">Дом</span>
             </button>
-            <button onclick="showSection('shop')" class="nav-item flex flex-col items-center gap-1">
-                <i class="fa-solid fa-bolt text-lg"></i>
-                <span class="text-[10px] font-bold uppercase italic">Пакети</span>
+            <button onclick="showSection('shop')" class="nav-link flex flex-col items-center gap-1">
+                <i class="fa-solid fa-bolt-lightning text-xl"></i>
+                <span class="text-[9px] font-bold uppercase">Магазин</span>
             </button>
-            <button onclick="showSection('affiliate')" class="nav-item flex flex-col items-center gap-1">
-                <i class="fa-solid fa-users text-lg"></i>
-                <span class="text-[10px] font-bold uppercase italic">Екип</span>
+            <button onclick="showSection('wallet')" class="nav-link flex flex-col items-center gap-1">
+                <i class="fa-solid fa-wallet text-xl"></i>
+                <span class="text-[9px] font-bold uppercase">Пари</span>
             </button>
-            <button onclick="showSection('wallet')" class="nav-item flex flex-col items-center gap-1">
-                <i class="fa-solid fa-wallet text-lg"></i>
-                <span class="text-[10px] font-bold uppercase italic">Баланс</span>
-            </button>
-            <button onclick="showSection('gallery')" class="nav-item flex flex-col items-center gap-1">
-                <i class="fa-solid fa-image text-lg"></i>
-                <span class="text-[10px] font-bold uppercase italic">Обекти</span>
+            <button onclick="showSection('gallery')" class="nav-link flex flex-col items-center gap-1">
+                <i class="fa-solid fa-charging-station text-xl"></i>
+                <span class="text-[9px] font-bold uppercase">Обекти</span>
             </button>
         </nav>
 
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, onSnapshot, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection, addDoc, query, where, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // ТВОЯТА КОНФИГУРАЦИЯ
         const firebaseConfig = {
             apiKey: "AIzaSyBMktDAVXxUgLbCyBiL9c_l6FDWQ8yqADc",
             authDomain: "energyonemilions.firebaseapp.com",
@@ -318,290 +338,178 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Global State
         let currentUser = null;
-        const WALLET_ADDR = "0x0f66Ac0f0D07Af0b444FF687Fb888eD8868d9173";
+        const MASTER_WALLET = "0x0f66Ac0f0D07Af0b444FF687Fb888eD8868d9173";
 
-        const packages = [
-            { id: 'b1', name: 'Basic 1', price: 100, daily: 7, monthly: 210, type: 'Basic' },
-            { id: 'b2', name: 'Basic 2', price: 300, daily: 15, monthly: 450, type: 'Basic' },
-            { id: 'b3', name: 'Basic 3', price: 500, daily: 35, monthly: 1050, type: 'Basic' },
-            { id: 'v1', name: 'Vip 1', price: 1500, daily: 100, monthly: 3000, type: 'VIP' },
-            { id: 'v2', name: 'Vip 2', price: 4000, daily: 350, monthly: 10500, type: 'VIP' },
-            { id: 'v3', name: 'Vip 3', price: 9000, daily: 600, monthly: 18000, type: 'VIP' },
-            { id: 'u1', name: 'Ultra Max', price: 20000, daily: 1500, monthly: 45000, type: 'Ultra' }
+        const PACKAGES = [
+            { id: 'b1', name: 'Basic 1', price: 100, daily: 7, monthly: 210 },
+            { id: 'b2', name: 'Basic 2', price: 300, daily: 15, monthly: 450 },
+            { id: 'b3', name: 'Basic 3', price: 500, daily: 35, monthly: 1050 },
+            { id: 'v1', name: 'VIP 1', price: 1500, daily: 100, monthly: 3000 },
+            { id: 'v2', name: 'VIP 2', price: 4000, daily: 350, monthly: 10500 },
+            { id: 'v3', name: 'VIP 3', price: 9000, daily: 600, monthly: 18000 },
+            { id: 'u1', name: 'ULTRA ENERGY', price: 20000, daily: 1500, monthly: 45000 }
         ];
 
-        // --- Core UI Functions ---
-        window.showSection = (sectionId) => {
-            if (!currentUser && sectionId !== 'auth') return;
-            
+        // --- ГЛОБАЛНИ ФУНКЦИИ ЗА ИНТЕРФЕЙСА ---
+        window.switchAuth = (type) => {
+            document.getElementById('form-login').classList.toggle('hidden', type !== 'login');
+            document.getElementById('form-register').classList.toggle('hidden', type !== 'register');
+            document.getElementById('btn-tab-login').classList.toggle('bg-white/5', type === 'login');
+            document.getElementById('btn-tab-login').classList.toggle('text-slate-500', type !== 'login');
+            document.getElementById('btn-tab-reg').classList.toggle('bg-white/5', type === 'register');
+            document.getElementById('btn-tab-reg').classList.toggle('text-slate-500', type !== 'register');
+        };
+
+        window.showSection = (name) => {
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId + '-section').classList.add('active');
+            document.getElementById(`section-${name}`).classList.add('active');
             
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            const index = ['dashboard', 'shop', 'affiliate', 'wallet', 'gallery'].indexOf(sectionId);
-            if (index !== -1) document.querySelectorAll('.nav-item')[index].classList.add('active');
-            
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            const links = { home: 0, shop: 1, wallet: 2, gallery: 3 };
+            document.querySelectorAll('.nav-link')[links[name]].classList.add('active');
             window.scrollTo(0,0);
         };
 
-        window.toggleAuth = (mode) => {
-            const loginF = document.getElementById('login-form');
-            const regF = document.getElementById('register-form');
-            const loginT = document.getElementById('login-tab');
-            const regT = document.getElementById('register-tab');
-
-            if (mode === 'login') {
-                loginF.classList.remove('hidden');
-                regF.classList.add('hidden');
-                loginT.classList.add('text-yellow-400', 'border-yellow-400');
-                regT.classList.remove('text-yellow-400', 'border-yellow-400');
-            } else {
-                regF.classList.remove('hidden');
-                loginF.classList.add('hidden');
-                regT.classList.add('text-yellow-400', 'border-yellow-400');
-                loginT.classList.remove('text-yellow-400', 'border-yellow-400');
-            }
-        };
-
-        // --- Business Logic ---
-        const generateRefCode = () => Math.random().toString(36).substring(2, 8).toUpperCase();
-
-        window.handleRegister = async () => {
+        // --- ОСНОВНА ЛОГИКА ---
+        window.onRegister = async () => {
             const name = document.getElementById('reg-name').value;
             const phone = document.getElementById('reg-phone').value;
-            const country = document.getElementById('reg-country').value;
+            const country = document.getElementById('reg-code').value;
             const invite = document.getElementById('reg-invite').value;
             const pass = document.getElementById('reg-pass').value;
             const fullPhone = country + phone;
 
-            if (!name || !phone || !invite || pass.length < 6) {
-                alert("Моля попълнете всички полета правилно. Паролата трябва да е 6-12 символа.");
-                return;
-            }
+            if (!name || !phone || !pass) { alert("Попълнете всички полета!"); return; }
 
             try {
-                // Check if user exists
                 const userRef = doc(db, "users", fullPhone);
-                const userSnap = await getDoc(userRef);
-                if (userSnap.exists()) {
-                    alert("Този телефонен номер вече е регистриран.");
-                    return;
-                }
+                const check = await getDoc(userRef);
+                if (check.exists()) { alert("Номерът вече съществува!"); return; }
 
-                // Create User
-                const userData = {
-                    name,
-                    phone: fullPhone,
-                    password: pass,
-                    invitedBy: invite,
-                    referralCode: generateRefCode(),
-                    balance: 0,
-                    totalEarned: 0,
-                    createdAt: Timestamp.now(),
-                    activePackages: []
-                };
+                const myRefCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+                await setDoc(userRef, {
+                    name, phone: fullPhone, password: pass, 
+                    invitedBy: invite, referralCode: myRefCode,
+                    balance: 0, totalEarned: 0, dailyIncome: 0,
+                    activePackages: [], createdAt: Timestamp.now()
+                });
 
-                await setDoc(userRef, userData);
-                alert("Успешна регистрация! Вече можете да влезете.");
-                toggleAuth('login');
-            } catch (e) {
-                console.error(e);
-                alert("Грешка при регистрация.");
-            }
+                alert("Регистрацията е успешна!");
+                switchAuth('login');
+            } catch (err) { alert("Грешка при връзка с базата!"); }
         };
 
-        window.handleLogin = async () => {
+        window.onLogin = async () => {
             const phone = document.getElementById('login-phone').value;
             const pass = document.getElementById('login-pass').value;
 
-            if (!phone || !pass) return;
-
             try {
-                // Basic login simulation using Firestore as Auth
                 const userRef = doc(db, "users", phone);
-                const userSnap = await getDoc(userRef);
+                const snap = await getDoc(userRef);
 
-                if (userSnap.exists() && userSnap.data().password === pass) {
-                    currentUser = userSnap.data();
-                    localStorage.setItem('energy_user', phone);
-                    initUserSession();
+                if (snap.exists() && snap.data().password === pass) {
+                    localStorage.setItem('user_session', phone);
+                    initUser(snap.data());
                 } else {
-                    alert("Грешен телефон или парола.");
+                    alert("Грешни данни за достъп!");
                 }
-            } catch (e) {
-                alert("Грешка при вход.");
-            }
+            } catch (err) { alert("Грешка при влизане!"); }
         };
 
-        const initUserSession = () => {
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('auth-section').classList.remove('active');
-            showSection('dashboard');
-            startRealtimeUpdates();
-            renderPackages();
-        };
-
-        const startRealtimeUpdates = () => {
-            const userRef = doc(db, "users", currentUser.phone);
-            onSnapshot(userRef, (doc) => {
-                const data = doc.data();
-                currentUser = data;
-                updateUI(data);
+        function initUser(userData) {
+            currentUser = userData;
+            document.getElementById('section-auth').classList.remove('active');
+            document.getElementById('main-nav').classList.remove('hidden');
+            document.getElementById('preloader').style.display = 'none';
+            showSection('home');
+            renderShop();
+            
+            // Real-time слушател за промени в баланса
+            onSnapshot(doc(db, "users", currentUser.phone), (doc) => {
+                const d = doc.data();
+                document.getElementById('ui-balance').innerText = d.balance.toFixed(2);
+                document.getElementById('ui-phone').innerText = d.phone.substring(0,5) + "****" + d.phone.slice(-3);
+                document.getElementById('ui-my-code').innerText = d.referralCode;
+                document.getElementById('ui-daily').innerText = d.dailyIncome.toFixed(2);
             });
 
-            // Transactions listener
-            const transRef = collection(db, "transactions");
-            const q = query(transRef, where("userPhone", "==", currentUser.phone));
-            onSnapshot(q, (snapshot) => {
-                const list = document.getElementById('transaction-history');
-                list.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const t = doc.data();
-                    list.innerHTML += `
-                        <div class="glass-card p-3 flex justify-between items-center text-sm">
-                            <div>
-                                <p class="font-bold uppercase">${t.type}</p>
-                                <p class="text-[10px] text-gray-500">${t.date.toDate().toLocaleString()}</p>
-                            </div>
-                            <p class="${t.amount > 0 ? 'text-green-400' : 'text-red-400'} font-bold">${t.amount} USDT</p>
-                        </div>
-                    `;
+            // Слушател за транзакции
+            const q = query(collection(db, "transactions"), where("user", "==", currentUser.phone));
+            onSnapshot(q, (snap) => {
+                const hist = document.getElementById('wallet-history');
+                hist.innerHTML = "";
+                snap.forEach(tDoc => {
+                    const t = tDoc.data();
+                    hist.innerHTML += `
+                        <div class="glass-panel p-4 flex justify-between items-center text-xs">
+                            <div><p class="font-bold uppercase">${t.type}</p><p class="text-slate-500">${t.date.toDate().toLocaleDateString()}</p></div>
+                            <p class="${t.amount > 0 ? 'text-green-400' : 'text-red-400'} font-black">${t.amount} USDT</p>
+                        </div>`;
                 });
             });
-        };
+        }
 
-        const updateUI = (data) => {
-            document.getElementById('user-display-phone').innerText = data.phone.substring(0,5) + "****" + data.phone.slice(-3);
-            document.getElementById('user-balance').innerText = data.balance.toFixed(2);
-            document.getElementById('wallet-balance-display').innerText = data.balance.toFixed(2);
-            document.getElementById('my-invite-code').innerText = data.referralCode;
-            document.getElementById('share-link').value = window.location.origin + "/?ref=" + data.referralCode;
-            
-            // Render active investments
-            const invList = document.getElementById('active-investments-list');
-            if (data.activePackages.length > 0) {
-                invList.innerHTML = "";
-                data.activePackages.forEach(p => {
-                    invList.innerHTML += `
-                        <div class="glass-card p-4 flex justify-between items-center border-l-2 border-green-500">
+        function renderShop() {
+            const list = document.getElementById('shop-list');
+            list.innerHTML = "";
+            PACKAGES.forEach(p => {
+                list.innerHTML += `
+                    <div class="glass-panel p-6 border-l-4 border-yellow-400 relative overflow-hidden group">
+                        <div class="absolute -right-4 -top-4 text-6xl text-yellow-400/5 rotate-12 group-hover:rotate-0 transition-transform">⚡</div>
+                        <h4 class="text-xl font-black italic uppercase mb-4">${p.name}</h4>
+                        <div class="flex justify-between items-end">
                             <div>
-                                <p class="font-black text-xs uppercase">${p.name}</p>
-                                <p class="text-[10px] text-gray-400 italic">Дневен доход: ${p.daily} USDT</p>
+                                <p class="text-[10px] text-slate-500 font-bold uppercase">Цена</p>
+                                <p class="text-2xl font-black">${p.price} USDT</p>
                             </div>
-                            <div class="text-green-400 text-xs font-bold animate-pulse">РАБОТИ...</div>
-                        </div>
-                    `;
-                });
-            }
-        };
-
-        const renderPackages = () => {
-            const container = document.getElementById('packages-container');
-            container.innerHTML = "";
-            packages.forEach(p => {
-                container.innerHTML += `
-                    <div class="glass-card p-5 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 bg-yellow-400 text-black px-3 py-1 text-[10px] font-black uppercase rounded-bl-xl">${p.type}</div>
-                        <h4 class="text-xl font-black uppercase mb-1">${p.name}</h4>
-                        <div class="grid grid-cols-2 gap-4 mt-4">
-                            <div>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase">Цена</p>
-                                <p class="text-lg font-bold">${p.price} USDT</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase">Дневен Доход</p>
-                                <p class="text-lg font-bold text-yellow-400">${p.daily} USDT</p>
+                            <div class="text-right">
+                                <p class="text-[10px] text-yellow-400 font-bold uppercase">Доход / Ден</p>
+                                <p class="text-2xl font-black text-yellow-400">${p.daily} USDT</p>
                             </div>
                         </div>
-                        <div class="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
-                            <p class="text-[10px] italic">Месечно: ${p.monthly} USDT</p>
-                            <button onclick="openPayment('${p.id}')" class="bg-white text-black px-6 py-2 rounded-lg font-black text-xs hover:bg-yellow-400 transition-colors uppercase">Купи Сега</button>
-                        </div>
-                    </div>
-                `;
+                        <button onclick="openPayModal('${p.price}')" class="btn-premium w-full py-4 rounded-xl mt-6">Инвестирай Сега</button>
+                    </div>`;
             });
+        }
+
+        window.openPayModal = (price) => {
+            document.getElementById('modal-pay').classList.remove('hidden');
+            document.getElementById('pay-qr').innerHTML = "";
+            new QRCode(document.getElementById("pay-qr"), { text: MASTER_WALLET, width: 140, height: 140 });
         };
 
-        // --- Transaction Handlers ---
-        window.openPayment = (id) => {
-            const modal = document.getElementById('payment-modal');
-            modal.classList.remove('hidden');
-            
-            // Generate QR
-            document.getElementById("qrcode").innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), {
-                text: WALLET_ADDR,
-                width: 150,
-                height: 150
-            });
-        };
+        window.closePayModal = () => document.getElementById('modal-pay').classList.add('hidden');
 
-        window.closePayment = () => document.getElementById('payment-modal').classList.add('hidden');
-
-        window.copyWallet = () => {
-            navigator.clipboard.writeText(WALLET_ADDR);
+        window.copyWalletAddr = () => {
+            navigator.clipboard.writeText(MASTER_WALLET);
             alert("Адресът е копиран!");
         };
 
-        window.submitDeposit = async () => {
-            alert("Вашата заявка за депозит е изпратена. Моля, изчакайте потвърждение от блокчейна (до 30 мин).");
-            closePayment();
-        };
+        window.onWithdraw = async () => {
+            const val = parseFloat(document.getElementById('withdraw-val').value);
+            if (val < 100 || val > currentUser.balance) { alert("Невалидна сума!"); return; }
 
-        window.handleWithdraw = async () => {
-            const amount = parseFloat(document.getElementById('withdraw-amount').value);
-            if (amount < 100) {
-                alert("Минималната сума за теглене е 100 USDT.");
-                return;
-            }
-            if (currentUser.balance < amount) {
-                alert("Нямате достатъчна наличност.");
-                return;
-            }
-
-            // Update balance
-            const userRef = doc(db, "users", currentUser.phone);
-            await updateDoc(userRef, {
-                balance: currentUser.balance - amount
-            });
-
-            // Log transaction
             await addDoc(collection(db, "transactions"), {
-                userPhone: currentUser.phone,
-                type: "WITHDRAW",
-                amount: -amount,
-                date: Timestamp.now()
+                user: currentUser.phone, type: "WITHDRAW", amount: -val, date: Timestamp.now()
             });
-
-            alert("Заявката за теглене е приета!");
+            await updateDoc(doc(db, "users", currentUser.phone), { balance: currentUser.balance - val });
+            alert("Заявката е изпратена!");
         };
 
-        window.logout = () => {
-            localStorage.clear();
-            location.reload();
-        };
+        window.logout = () => { localStorage.clear(); location.reload(); };
 
-        // Initialization
         window.onload = () => {
-            const savedPhone = localStorage.getItem('energy_user');
-            if (savedPhone) {
-                // Auto-login logic
-                const userRef = doc(db, "users", savedPhone);
-                getDoc(userRef).then(snap => {
-                    if (snap.exists()) {
-                        currentUser = snap.data();
-                        initUserSession();
-                    } else {
-                        document.getElementById('loader').style.display = 'none';
-                    }
+            const saved = localStorage.getItem('user_session');
+            if (saved) {
+                getDoc(doc(db, "users", saved)).then(snap => {
+                    if (snap.exists()) initUser(snap.data());
+                    else document.getElementById('preloader').style.display = 'none';
                 });
             } else {
-                document.getElementById('loader').style.display = 'none';
+                document.getElementById('preloader').style.display = 'none';
             }
         };
-
     </script>
 </body>
 </html>
