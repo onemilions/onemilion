@@ -166,8 +166,8 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
         .stat-box { display: flex; justify-content: space-between; margin-top: 10px; }
-        .stat-item { text-align: center; }
-        .stat-value { font-size: 20px; color: var(--bright-yellow); font-weight: 600; }
+        .stat-item { text-align: center; width: 45%; }
+        .stat-value { font-size: 20px; color: var(--bright-yellow); font-weight: 600; margin-top: 5px; }
         .stat-label { font-size: 12px; color: var(--text-gray); }
 
         /* Packages */
@@ -222,6 +222,7 @@
 
 <div id="app-container">
 
+    <!-- LOGIN VIEW -->
     <div id="login-view" class="view active">
         <div class="text-center">
             <h1 class="logo-title">Invest In Energy</h1>
@@ -250,15 +251,15 @@
             <label>Password</label>
             <div class="input-wrapper">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="login-password" placeholder="Enter password (6-12 chars)" minlength="6" maxlength="12">
+                <input type="password" id="login-password" placeholder="Enter password" minlength="6" maxlength="12">
             </div>
         </div>
 
         <button class="btn" onclick="appLogic.login()">Login</button>
-        
         <p class="switch-link" onclick="appLogic.switchAuthView('register')">Don't have an account? <span>Register here</span></p>
     </div>
 
+    <!-- REGISTER VIEW -->
     <div id="register-view" class="view">
         <div class="text-center">
             <h1 class="logo-title">Invest In Energy</h1>
@@ -308,10 +309,10 @@
         </div>
 
         <button class="btn" onclick="appLogic.register()">Create Account</button>
-        
         <p class="switch-link" onclick="appLogic.switchAuthView('login')">Already have an account? <span>Login here</span></p>
     </div>
 
+    <!-- PROFILE VIEW -->
     <div id="profile-view" class="view">
         <h2 class="text-center">My Profile</h2>
         <div class="card text-center" style="margin-top: 20px;">
@@ -340,6 +341,7 @@
         </button>
     </div>
 
+    <!-- WALLET VIEW -->
     <div id="wallet-view" class="view">
         <h2 class="text-center">My Wallet</h2>
         
@@ -347,6 +349,15 @@
             <p class="stat-label">Total Balance (USDT)</p>
             <h1 style="font-size: 40px; margin: 10px 0;">$ <span id="wallet-balance">0.00</span></h1>
             
+            <!-- НОВО ПОЛЕ ЗА КРИПТО АДРЕС -->
+            <div class="form-group" style="text-align: left; margin-top: 20px;">
+                <label>Withdrawal Crypto Address (USDT ERC20/TRC20)</label>
+                <div class="input-wrapper" style="background: rgba(0,0,0,0.2);">
+                    <i class="fas fa-link"></i>
+                    <input type="text" id="withdraw-address" placeholder="Paste your wallet address here...">
+                </div>
+            </div>
+
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="btn" onclick="alert('Deposit via Packages store.')"><i class="fas fa-arrow-down"></i> Deposit</button>
                 <button class="btn btn-outline" onclick="appLogic.withdraw()"><i class="fas fa-arrow-up"></i> Withdraw</button>
@@ -360,14 +371,14 @@
         </div>
     </div>
 
+    <!-- PACKAGES VIEW -->
     <div id="packages-view" class="view">
         <h2 class="text-center">Energy Packages</h2>
         <p class="text-center" style="color: var(--text-gray); margin-bottom: 20px;">Invest and earn daily income</p>
-
-        <div id="packages-container">
-            </div>
+        <div id="packages-container"></div>
     </div>
 
+    <!-- AFFILIATE VIEW -->
     <div id="affiliate-view" class="view">
         <h2 class="text-center">Affiliate Program</h2>
         
@@ -383,16 +394,19 @@
             <div class="stat-box">
                 <div class="stat-item">
                     <div class="stat-label">Total Users</div>
-                    <div class="stat-value">0</div>
+                    <!-- Добавено ID за Real-time обновяване -->
+                    <div class="stat-value" id="affiliate-team-size">0</div> 
                 </div>
                 <div class="stat-item">
-                    <div class="stat-label">Earned (USDT)</div>
-                    <div class="stat-value">$ 0.00</div>
+                    <div class="stat-label">Earned from team</div>
+                    <!-- Добавено ID за Real-time обновяване -->
+                    <div class="stat-value" id="affiliate-earned">$ 0.00</div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- BOTTOM NAV -->
     <nav id="bottom-nav" style="display: none;">
         <div class="nav-item active" onclick="appLogic.navTo('profile')">
             <i class="fas fa-user"></i>
@@ -412,6 +426,7 @@
         </div>
     </nav>
 
+    <!-- PAYMENT MODAL -->
     <div id="payment-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="appLogic.closeModal()">&times;</span>
@@ -419,7 +434,7 @@
             <p id="modal-pkg-name" style="color: var(--text-gray); font-size: 14px; margin-bottom: 15px;">Package</p>
             
             <div class="warning-text">
-                <i class="fas fa-info-circle"></i> Send only USD Coin (ERC20) assets to this address. Other assets will be lost forever.
+                <i class="fas fa-info-circle"></i> Send only USD Coin (ERC20) assets to this address.
             </div>
 
             <div style="display: inline-block; background: #333; padding: 5px 15px; border-radius: 20px; font-size: 14px; margin-bottom: 10px;">
@@ -443,10 +458,11 @@
 
 </div>
 
+<!-- FIREBASE ИНИЦИАЛИЗАЦИЯ -->
 <script type="module">
-    // ВАЖНО: Тук добавихме Realtime Database вместо Firestore
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+    // ДОБАВЕН 'onValue' ЗА РЕАЛНО ВРЕМЕ
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBMktDAVXxUgLbCyBiL9c_l6FDWQ8yqADc",
@@ -458,18 +474,16 @@
         appId: "1:1084198944849:web:57fc342554a08ed1dd3870"
     };
 
-    // Инициализация на Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Правим функциите достъпни за основния скрипт по-долу
     window.firebaseDb = db;
     window.firebaseRef = ref;
     window.firebaseSet = set;
+    window.firebaseOnValue = onValue; // Експорт на onValue
 </script>
 
 <script>
-    // Packages Data
     const energyPackages = [
         { id: 'basic1', name: 'Basic 1', price: 100, daily: 7, monthly: 210 },
         { id: 'basic2', name: 'Basic 2', price: 300, daily: 15, monthly: 450 },
@@ -481,12 +495,11 @@
     ];
 
     const appLogic = {
-        currentUser: null,
-
         init() {
             this.renderPackages();
             if(localStorage.getItem('isLoggedIn') === 'true') {
                 this.loadUserData();
+                this.startDatabaseListener(); // Стартираме слушателя при зареждане
                 this.showMainApp();
             }
         },
@@ -560,28 +573,28 @@
             const newUid = Math.floor(Math.random() * 900000 + 100000).toString();
             
             try {
-                // Изпращане на данните към Firebase Realtime Database
                 const userRef = window.firebaseRef(window.firebaseDb, 'users/' + newUid);
                 await window.firebaseSet(userRef, {
                     fullName: name,
                     phone: fullPhone,
                     inviteCodeUsed: inviteCode || "none",
                     myCode: generatedCode,
-                    password: password, // В реално приложение паролите се криптират!
+                    password: password, 
                     balance: 0,
                     teamSize: 0,
+                    earnedFromTeam: 0, // ДОБАВЕНО: Спечелени от отбора
                     createdAt: new Date().toISOString()
                 });
                 
-                alert("Account created successfully and saved to Database!");
+                alert("Account created successfully!");
                 
-                // Запазване локално за сесията
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('userPhone', fullPhone);
                 localStorage.setItem('myCode', generatedCode);
                 localStorage.setItem('uid', newUid);
                 
                 this.loadUserData();
+                this.startDatabaseListener(); // Стартираме слушателя
                 this.showMainApp();
             } catch (error) {
                 alert("Error connecting to database: " + error.message);
@@ -595,15 +608,15 @@
 
             if(!phone || !password) return alert("Please enter phone and password");
 
-            // Mock login - за да работи демото
             localStorage.setItem('isLoggedIn', 'true');
             if(!localStorage.getItem('userPhone')) {
                 localStorage.setItem('userPhone', countryCode + phone);
                 localStorage.setItem('myCode', 'EN1029');
-                localStorage.setItem('uid', '102938');
+                localStorage.setItem('uid', '102938'); 
             }
             
             this.loadUserData();
+            this.startDatabaseListener(); // Стартираме слушателя след логване
             this.showMainApp();
         },
 
@@ -623,12 +636,44 @@
             document.getElementById('display-uid').innerText = uid;
         },
 
+        // НОВА ФУНКЦИЯ: Слуша за промени в реално време от базата данни
+        startDatabaseListener() {
+            const uid = localStorage.getItem('uid');
+            if(!uid) return;
+
+            const userRef = window.firebaseRef(window.firebaseDb, 'users/' + uid);
+            window.firebaseOnValue(userRef, (snapshot) => {
+                const data = snapshot.val();
+                if(data) {
+                    // Обновяване на баланса във Wallet
+                    document.getElementById('wallet-balance').innerText = data.balance !== undefined ? data.balance : "0.00";
+                    
+                    // Обновяване на брой поканени хора (Профил и Affiliate)
+                    const teamSize = data.teamSize !== undefined ? data.teamSize : "0";
+                    document.getElementById('display-team-size').innerText = teamSize;
+                    document.getElementById('affiliate-team-size').innerText = teamSize;
+                    
+                    // Обновяване на спечелени пари от отбора (Affiliate)
+                    const earned = data.earnedFromTeam !== undefined ? data.earnedFromTeam : "0.00";
+                    document.getElementById('affiliate-earned').innerText = "$ " + earned;
+                }
+            });
+        },
+
+        // ОБНОВЕНА ФУНКЦИЯ: Взема предвид въведения крипто адрес
         withdraw() {
             const balance = parseFloat(document.getElementById('wallet-balance').innerText);
+            const withdrawAddress = document.getElementById('withdraw-address').value;
+            
+            if(!withdrawAddress) {
+                return alert("Please enter your Crypto Wallet Address before withdrawing.");
+            }
+
             if(balance < 100) {
                 alert("Minimum withdrawal is 100 USDT.");
             } else {
-                alert("Withdrawal requested.");
+                alert("Withdrawal requested successfully to address:\n" + withdrawAddress);
+                // Тук по-късно можеш да добавиш код, който изважда баланса в базата
             }
         },
 
@@ -654,13 +699,12 @@
         },
 
         confirmSent() {
-            alert("Payment confirmation submitted. Please wait for the system to verify the blockchain transaction.");
+            alert("Payment confirmation submitted. Please wait for the system to verify the transaction.");
             this.closeModal();
         }
     };
 
     window.onload = () => appLogic.init();
-
 </script>
 </body>
 </html>
