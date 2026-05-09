@@ -263,7 +263,10 @@
     <div id="register-view" class="view">
         <div class="text-center">
             <h1 class="logo-title">Invest In Energy</h1>
-            <div class="logo-icon">⚡️</div>
+            
+            <!-- ТУК Е ДОБАВЕНА СНИМКАТА (смени 'car-image.jpg' с точното име на файла си) -->
+            <img src="car-image.jpg" alt="Car Charging Station" style="width: 100%; max-width: 250px; margin: 15px auto; display: block; border-radius: 12px;">
+            
             <p style="color: var(--text-gray); margin-bottom: 20px;">Create new account</p>
         </div>
 
@@ -363,11 +366,6 @@
             </div>
             <p style="font-size: 11px; color: var(--text-gray); margin-top: 10px;">* Minimum withdrawal amount is 100 USDT</p>
         </div>
-
-        <h3 style="margin-top: 30px; font-size: 16px;">Transaction History</h3>
-        <div id="transaction-list">
-            <p style="text-align: center; color: var(--text-gray); font-size: 14px; margin-top: 20px;">No transactions yet.</p>
-        </div>
     </div>
 
     <!-- PACKAGES VIEW -->
@@ -460,7 +458,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
 
-    // Твоите Firebase данни
     const firebaseConfig = {
         apiKey: "AIzaSyBMktDAVXxUgLbCyBiL9c_l6FDWQ8yqADc",
         authDomain: "energyonemilions.firebaseapp.com",
@@ -474,7 +471,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Правим функциите достъпни за основния скрипт
     window.firebaseDb = db;
     window.firebaseRef = ref;
     window.firebaseSet = set;
@@ -567,18 +563,16 @@
             if(!this.validatePassword(password)) return;
 
             const fullPhone = countryCode + phone;
-            const dbKey = fullPhone.replace('+', ''); // Премахваме '+' за чист ключ в базата
+            const dbKey = fullPhone.replace('+', '');
             const generatedCode = 'EN' + Math.floor(Math.random()*9000 + 1000);
             
             try {
-                // Проверка дали потребителят вече съществува
                 const userRef = window.firebaseRef(window.firebaseDb, 'users/' + dbKey);
                 
                 window.firebaseOnValue(userRef, async (snapshot) => {
                     if (snapshot.exists()) {
                         alert("Този телефонен номер вече е регистриран!");
                     } else {
-                        // Записване на новия потребител
                         await window.firebaseSet(userRef, {
                             fullName: name,
                             phone: fullPhone,
@@ -588,10 +582,12 @@
                             balance: 0,
                             teamSize: 0,
                             earnedFromTeam: 0,
+                            hasActiveReferral: false, // Новото поле за защита на тегленето
                             createdAt: new Date().toISOString()
                         });
                         
-                        alert("Регистрацията е успешна!");
+                        // Новото приветствено съобщение
+                        alert("Welcome to green energy Our company offers investment in car charging stations");
                         
                         localStorage.setItem('isLoggedIn', 'true');
                         localStorage.setItem('uid', dbKey);
@@ -602,7 +598,7 @@
                         this.startDatabaseListener();
                         this.showMainApp();
                     }
-                }, { onlyOnce: true }); // Важно: Слушаме само веднъж при регистрация
+                }, { onlyOnce: true });
             } catch (error) {
                 alert("Грешка при връзка с базата: " + error.message);
             }
@@ -623,7 +619,6 @@
                 
                 window.firebaseOnValue(userRef, (snapshot) => {
                     const data = snapshot.val();
-                    // Проверяваме дали съществува и дали паролата съвпада
                     if (data && data.password === password) {
                         localStorage.setItem('isLoggedIn', 'true');
                         localStorage.setItem('uid', dbKey);
@@ -696,26 +691,38 @@
             }
 
             try {
-                // Създаваме уникален запис в 'withdrawals'
-                const requestId = 'req_' + Date.now();
-                const withdrawRef = window.firebaseRef(window.firebaseDb, 'withdrawals/' + requestId);
+                // ПРОВЕРКА: Има ли потребителят реферал със закупен пакет?
+                const userRef = window.firebaseRef(window.firebaseDb, 'users/' + uid);
+                window.firebaseOnValue(userRef, async (snapshot) => {
+                    const data = snapshot.val();
+                    
+                    // Ако 'hasActiveReferral' не е true, блокираме тегленето
+                    if (!data || data.hasActiveReferral !== true) {
+                        alert("Трябва да имате поне един човек, който се е регистрирал под вас и е закупил Basic 1, за да изтеглите средства.");
+                        return;
+                    }
 
-                await window.firebaseSet(withdrawRef, {
-                    userPhone: phone,
-                    userKey: uid,
-                    amount: balance,
-                    cryptoAddress: withdrawAddress,
-                    status: "pending",
-                    timestamp: new Date().toISOString()
-                });
+                    // Ако преминат проверката, създаваме запис за теглене
+                    const requestId = 'req_' + Date.now();
+                    const withdrawRef = window.firebaseRef(window.firebaseDb, 'withdrawals/' + requestId);
 
-                alert("Заявката за теглене е изпратена успешно!\nАдрес: " + withdrawAddress);
-                
-                // Зануляване на баланса на потребителя след теглене
-                const userBalanceRef = window.firebaseRef(window.firebaseDb, 'users/' + uid + '/balance');
-                await window.firebaseSet(userBalanceRef, 0);
+                    await window.firebaseSet(withdrawRef, {
+                        userPhone: phone,
+                        userKey: uid,
+                        amount: balance,
+                        cryptoAddress: withdrawAddress,
+                        status: "pending",
+                        timestamp: new Date().toISOString()
+                    });
 
-                document.getElementById('withdraw-address').value = ''; // Изчистваме полето
+                    alert("Заявката за теглене е изпратена успешно!\nАдрес: " + withdrawAddress);
+                    
+                    const userBalanceRef = window.firebaseRef(window.firebaseDb, 'users/' + uid + '/balance');
+                    await window.firebaseSet(userBalanceRef, 0);
+
+                    document.getElementById('withdraw-address').value = '';
+
+                }, { onlyOnce: true });
 
             } catch (error) {
                 alert("Възникна грешка при тегленето: " + error.message);
