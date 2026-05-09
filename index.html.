@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Invest In Energy ⚡️ Professional Edition</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========================================
+           CORE DESIGN SYSTEM & VARIABLES
+           ========================================
+        */
+        :root {
+            --dark-green: #061f14;
+            --dark-green-medium: #0c2e1f;
+            --dark-green-light: #12452f;
+            --bright-yellow: #FFD700;
+            --soft-yellow: #ffec85;
+            --gold-gradient: linear-gradient(135deg, #FFD700 0%, #b8860b 100%);
+            --green-gradient: linear-gradient(145deg, #12452f, #082b1c);
+            --text-light: #ffffff;
+            --text-gray: #a0aab2;
+            --error-red: #ff4d4d;
+            --success-green: #00ff88;
+            --admin-purple: #6c5ce7;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 12px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            background-color: #000; /* Outer background */
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        /* App Container (Mobile Wrapper) */
+        #app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            background-color: var(--dark-green);
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,255,136,0.1);
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        #app-container::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        /* ========================================
+           ANIMATIONS & TRANSITIONS
+           ========================================
+        */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseYellow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========================================
+           VIEW MANAGEMENT
+           ========================================
+        */
+        .view {
+            display: none;
+            padding: 25px;
+            padding-bottom: 100px;
+            min-height: 100%;
+            width: 100%;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* ========================================
+           HEADER & LOGO STYLES
+           ========================================
+        */
+        .header-area {
+            text-align: center;
+            padding: 40px 0 20px;
+        }
+
+        .logo-title {
+            font-size: 34px;
+            font-weight: 900;
+            color: var(--bright-yellow);
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition);
+        }
+
+        .logo-title:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+
+        .tagline {
+            color: var(--text-gray);
+            font-size: 13px;
+            letter-spacing: 1px;
+            font-weight: 400;
+        }
+
+        /* ========================================
+           INPUTS & FORMS
+           ========================================
+        */
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--bright-yellow);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            margin-left: 5px;
+            letter-spacing: 1px;
+        }
+
+        .input-box {
+            background: var(--dark-green-medium);
+            border: 1px solid rgba(255,215,0,0.1);
+            border-radius: var(--radius);
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .input-box:focus-within {
+            border-color: var(--bright-yellow);
+            background: var(--dark-green-light);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+        }
+
+        .input-box i {
+            color: var(--bright-yellow);
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .input-box input, .input-box select {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        /* ========================================
+           BUTTONS
+           ========================================
+        */
+        .btn-primary {
+            background: var(--gold-gradient);
+            color: var(--dark-green);
+            border: none;
+            border-radius: var(--radius);
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--bright-yellow);
+            color: var(--bright-yellow);
+            padding: 15px;
+            border-radius: var(--radius);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        /* ========================================
+           CARDS & UI ELEMENTS
+           ========================================
+        */
+        .card {
+            background: var(--green-gradient);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: var(--shadow);
+        }
+
+        .profile-header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            color: var(--dark-green);
+            border: 4px solid var(--dark-green-light);
+        }
+
+        .package-tag {
+            display: inline-block;
+            background: var(--admin-purple);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        /* ========================================
+           ADMIN PANEL SPECIFIC
+           ========================================
+        */
+        #admin-view {
+            background: #0d0d1a;
+            border: 2px solid var(--admin-purple);
+        }
+
+        .admin-badge {
+            background: var(--admin-purple);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        /* ========================================
+           NAVIGATION
+           ========================================
+        */
+        #bottom-nav {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(6, 31, 20, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 5px;
+            border-top: 1px solid rgba(255,215,0,0.1);
+            z-index: 999;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-gray);
+            font-size: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .nav-item.active {
+            color: var(--bright-yellow);
+        }
+
+        /* ========================================
+           MODALS
+           ========================================
+        */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-body {
+            background: var(--dark-green-medium);
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--bright-yellow);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+
+    <div id="login-view" class="view active">
+        <div class="header-area">
+            <h1 class="logo-title" id="logo-main" onclick="adminLogic.trigger()">Invest In Energy</h1>
+            <p class="tagline">FUTURE OF GREEN TECHNOLOGY</p>
+        </div>
+
+        <div style="margin-top: 40px;">
+            <label class="form-label">Phone Number</label>
+            <div class="input-box">
+                <i class="fas fa-phone"></i>
+                <input type="tel" id="login-phone" placeholder="359 87 123 4567">
+            </div>
+
+            <label class="form-label">Secure Password</label>
+            <div class="input-box">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="login-password" placeholder="••••••••">
+            </div>
+
+            <button class="btn-primary" onclick="appLogic.login()">
+                Sign In <i class="fas fa-arrow-right"></i>
+            </button>
+            
+            <p style="text-align: center; margin-top: 25px; color: var(--text-gray); font-size: 14px;">
+                New here? <span style="color: var(--bright-yellow); font-weight: 700; cursor: pointer;" onclick="appLogic.switchView('register')">Create Account</span>
+            </p>
+        </div>
+    </div>
+
+    <div id="register-view" class="view">
+        <div class="header-area">
+            <h1 class="logo-title">Join The Grid</h1>
+            <p class="tagline">START YOUR ENERGY JOURNEY</p>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <label class="form-label">Full Name</label>
+            <div class="input-box">
+                <i class="fas fa-user"></i>
+                <input type="text" id="reg-name" placeholder="John Doe">
+            </div>
+
+            <label class="form-label">Phone Number</label>
+            <div class="input-box">
+                <i class="fas fa-phone"></i>
+                <input type="tel" id="reg-phone" placeholder="359 87 123 4567">
+            </div>
+
+            <label class="form-label">Invitation Code</label>
+            <div class="input-box">
+                <i class="fas fa-ticket-alt"></i>
+                <input type="text" id="reg-invite" placeholder="ENERGY-XXXX">
+            </div>
+
+            <label class="form-label">Set Password</label>
+            <div class="input-box">
+                <i class="fas fa-shield-alt"></i>
+                <input type="password" id="reg-password" placeholder="Min. 6 chars">
+            </div>
+
+            <button class="btn-primary" onclick="appLogic.register()">
+                Register Now <i class="fas fa-plug"></i>
+            </button>
+            
+            <p style="text-align: center; margin-top: 20px; color: var(--text-gray); font-size: 14px;">
+                Already a member? <span style="color: var(--bright-yellow); font-weight: 700; cursor: pointer;" onclick="appLogic.switchView('login')">Login</span>
+            </p>
+        </div>
+    </div>
+
+    <div id="profile-view" class="view">
+        <div class="profile-header">
+            <div class="avatar-circle">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <h2 id="ui-profile-name">User Name</h2>
+            <p id="ui-profile-phone" style="color: var(--text-gray); font-size: 14px;">+359 0000000</p>
+            <div id="ui-active-package" class="package-tag">No Active Package</div>
+        </div>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="font-size: 12px; color: var(--text-gray); text-transform: uppercase;">Available Balance</p>
+                    <h1 style="font-size: 32px; color: var(--bright-yellow);">$ <span id="ui-balance">0.00</span></h1>
+                </div>
+                <i class="fas fa-wallet" style="font-size: 30px; opacity: 0.2;"></i>
+            </div>
+        </div>
+
+        <div class="card">
+            <h4 style="margin-bottom: 15px; font-size: 14px; color: var(--bright-yellow);">Account Info</h4>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span style="color: var(--text-gray);">UID:</span>
+                <span id="ui-uid" style="font-family: 'JetBrains Mono';">---</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-gray);">Invite Code:</span>
+                <span id="ui-my-code" style="font-weight: 700; color: var(--bright-yellow);">---</span>
+            </div>
+        </div>
+
+        <button class="btn-outline" onclick="appLogic.logout()" style="border-color: #ff4d4d; color: #ff4d4d;">
+            <i class="fas fa-power-off"></i> Logout
+        </button>
+    </div>
+
+    <div id="admin-view" class="view">
+        <div class="header-area">
+            <div class="admin-badge">SYSTEM ADMINISTRATOR</div>
+            <h1 style="color: var(--admin-purple);">Console Control</h1>
+        </div>
+
+        <div class="card" style="background: rgba(108, 92, 231, 0.1); border-color: var(--admin-purple);">
+            <h3 style="margin-bottom: 20px; font-size: 16px;">Modify User Account</h3>
+            
+            <label class="form-label" style="color: var(--admin-purple);">Target Phone</label>
+            <div class="input-box" style="border-color: var(--admin-purple);">
+                <i class="fas fa-search" style="color: var(--admin-purple);"></i>
+                <input type="tel" id="admin-target-phone" placeholder="359XXXXXXXXX">
+            </div>
+
+            <label class="form-label" style="color: var(--admin-purple);">Select Package</label>
+            <div class="input-box" style="border-color: var(--admin-purple);">
+                <i class="fas fa-box-open" style="color: var(--admin-purple);"></i>
+                <select id="admin-pkg-select">
+                    <option value="none">None / Reset</option>
+                    <option value="Basic 1">Basic 1 ($100)</option>
+                    <option value="Basic 2">Basic 2 ($300)</option>
+                    <option value="Basic 3">Basic 3 ($500)</option>
+                    <option value="VIP 1">VIP 1 ($1500)</option>
+                    <option value="VIP 2">VIP 2 ($4000)</option>
+                    <option value="VIP 3">VIP 3 ($9000)</option>
+                    <option value="Ultimate Energy">Ultimate Energy ($20000)</option>
+                </select>
+            </div>
+
+            <label class="form-label" style="color: var(--admin-purple);">Daily Profit Amount ($)</label>
+            <div class="input-box" style="border-color: var(--admin-purple);">
+                <i class="fas fa-hand-holding-usd" style="color: var(--admin-purple);"></i>
+                <input type="number" id="admin-daily-profit" placeholder="e.g. 15.50">
+            </div>
+
+            <button class="btn-primary" style="background: var(--admin-purple); color: white;" onclick="adminLogic.updateUser()">
+                Execute Changes <i class="fas fa-bolt"></i>
+            </button>
+        </div>
+
+        <button class="btn-outline" onclick="appLogic.switchView('profile')" style="border-color: var(--text-gray); color: var(--text-gray);">
+            Back to User Mode
+        </button>
+    </div>
+
+    <div id="wallet-view" class="view">
+        <h2 class="text-center">Financial Center</h2>
+        <div class="card" style="margin-top: 30px;">
+            <p class="text-center" style="color: var(--text-gray);">Current Assets</p>
+            <h1 class="text-center" style="font-size: 45px;">$ <span id="ui-wallet-balance">0.00</span></h1>
+        </div>
+
+        <div class="card">
+            <h3 style="font-size: 16px; margin-bottom: 15px;">Withdrawal Access</h3>
+            <div id="withdraw-status-box" style="padding: 15px; border-radius: 10px; background: rgba(255,255,255,0.05); margin-bottom: 15px;">
+                <p id="withdraw-msg" style="font-size: 13px; color: var(--error-red);">
+                    <i class="fas fa-lock"></i> Locked: You need at least 1 referral with an active package.
+                </p>
+            </div>
+            
+            <label class="form-label">USDT Address</label>
+            <div class="input-box">
+                <i class="fas fa-link"></i>
+                <input type="text" id="withdraw-address" placeholder="0x...">
+            </div>
+            <button id="btn-withdraw" class="btn-primary" style="opacity: 0.5;" onclick="appLogic.handleWithdraw()" disabled>
+                Withdraw Funds
+            </button>
+        </div>
+    </div>
+
+    <nav id="bottom-nav" style="display: none;">
+        <div class="nav-item active" onclick="appLogic.navTo('profile', this)">
+            <i class="fas fa-user-shield"></i>
+            <span>Profile</span>
+        </div>
+        <div class="nav-item" onclick="appLogic.navTo('wallet', this)">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </div>
+        <div class="nav-item" onclick="alert('Store opening soon!')">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Store</span>
+        </div>
+    </nav>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+
+    // Пълна конфигурация
+    const firebaseConfig = {
+        apiKey: "AIzaSyBMktDAVXxUgLbCyBiL9c_l6FDWQ8yqADc",
+        authDomain: "energyonemilions.firebaseapp.com",
+        databaseURL: "https://energyonemilions-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "energyonemilions",
+        storageBucket: "energyonemilions.firebasestorage.app",
+        messagingSenderId: "1084198944849",
+        appId: "1:1084198944849:web:57fc342554a08ed1dd3870"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Global Registry
+    window.fdb = { db, ref, set, get, onValue, update };
+</script>
+
+<script>
+    // System Variables
+    let currentUserId = null;
+    let logoClickCount = 0;
+    let logoTimer = null;
+
+    const appLogic = {
+        switchView(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(id + '-view').classList.add('active');
+        },
+
+        navTo(id, el) {
+            this.switchView(id);
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        },
+
+        async login() {
+            const phone = document.getElementById('login-phone').value.replace(/\s+/g, '');
+            const pass = document.getElementById('login-password').value;
+
+            if(!phone || !pass) return alert("Please fill all fields!");
+
+            const userRef = window.fdb.ref(window.fdb.db, 'users/' + phone);
+            const snapshot = await window.fdb.get(userRef);
+
+            if(snapshot.exists()) {
+                const data = snapshot.val();
+                if(data.password === pass) {
+                    currentUserId = phone;
+                    localStorage.setItem('energy_uid', phone);
+                    this.enterApp(data);
+                } else {
+                    alert("Invalid password!");
+                }
+            } else {
+                alert("User not found!");
+            }
+        },
+
+        async register() {
+            const name = document.getElementById('reg-name').value;
+            const phone = document.getElementById('reg-phone').value.replace(/\s+/g, '');
+            const invite = document.getElementById('reg-invite').value;
+            const pass = document.getElementById('reg-password').value;
+
+            if(!name || !phone || !pass) return alert("Fill required fields!");
+            if(pass.length < 6) return alert("Password too short!");
+
+            const userRef = window.fdb.ref(window.fdb.db, 'users/' + phone);
+            const check = await window.fdb.get(userRef);
+            if(check.exists()) return alert("Phone already registered!");
+
+            const myCode = 'EN-' + Math.floor(1000 + Math.random() * 9000);
+            
+            const userData = {
+                fullName: name,
+                phone: phone,
+                password: pass,
+                uplineCode: invite || "none",
+                myCode: myCode,
+                balance: 0.0,
+                activePackage: "none",
+                dailyProfit: 0,
+                lastProfitUpdate: Date.now(),
+                referrals: [] // Ще се пълни автоматично
+            };
+
+            await window.fdb.set(userRef, userData);
+
+            // Реферална логика: Търсим кой е поканил този човек
+            if(invite && invite !== "none") {
+                this.updateReferralTree(invite, phone);
+            }
+
+            alert("Registration Successful!");
+            this.switchView('login');
+        },
+
+        async updateReferralTree(inviteCode, newMemberPhone) {
+            const usersRef = window.fdb.ref(window.fdb.db, 'users');
+            const snapshot = await window.fdb.get(usersRef);
+            
+            if(snapshot.exists()) {
+                const allUsers = snapshot.val();
+                for(let key in allUsers) {
+                    if(allUsers[key].myCode === inviteCode) {
+                        const uplineRef = window.fdb.ref(window.fdb.db, `users/${key}/referrals`);
+                        const currentRefs = allUsers[key].referrals || [];
+                        currentRefs.push(newMemberPhone);
+                        await window.fdb.set(uplineRef, currentRefs);
+                        break;
+                    }
+                }
+            }
+        },
+
+        enterApp(data) {
+            document.getElementById('bottom-nav').style.display = 'flex';
+            this.switchView('profile');
+            this.startSync();
+        },
+
+        startSync() {
+            const userRef = window.fdb.ref(window.fdb.db, 'users/' + currentUserId);
+            window.fdb.onValue(userRef, (snapshot) => {
+                const data = snapshot.val();
+                if(!data) return;
+
+                // Sync UI
+                document.getElementById('ui-profile-name').innerText = data.fullName;
+                document.getElementById('ui-profile-phone').innerText = "+" + data.phone;
+                document.getElementById('ui-balance').innerText = data.balance.toFixed(2);
+                document.getElementById('ui-wallet-balance').innerText = data.balance.toFixed(2);
+                document.getElementById('ui-uid').innerText = data.phone;
+                document.getElementById('ui-my-code').innerText = data.myCode;
+                
+                const pkgDisplay = document.getElementById('ui-active-package');
+                pkgDisplay.innerText = data.activePackage !== "none" ? data.activePackage : "No Active Package";
+                pkgDisplay.style.background = data.activePackage !== "none" ? "var(--success-green)" : "var(--admin-purple)";
+
+                // Печалби на 24 часа
+                this.checkDailyProfit(data);
+                
+                // Проверка за теглене
+                this.checkWithdrawalEligibility(data);
+            });
+        },
+
+        async checkDailyProfit(data) {
+            if(data.activePackage === "none" || !data.dailyProfit) return;
+
+            const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000;
+            const lastUpdate = data.lastProfitUpdate || 0;
+
+            if(now - lastUpdate >= oneDay) {
+                const newBalance = (data.balance || 0) + parseFloat(data.dailyProfit);
+                await window.fdb.update(window.fdb.ref(window.fdb.db, 'users/' + currentUserId), {
+                    balance: newBalance,
+                    lastProfitUpdate: now
+                });
+                console.log("Profit added!");
+            }
+        },
+
+        async checkWithdrawalEligibility(userData) {
+            const msgEl = document.getElementById('withdraw-msg');
+            const btn = document.getElementById('btn-withdraw');
+            const refs = userData.referrals || [];
+            
+            let hasActiveReferral = false;
+
+            if(refs.length > 0) {
+                // Проверяваме всеки реферал дали има пакет
+                for(let refPhone of refs) {
+                    const refSnap = await window.fdb.get(window.fdb.ref(window.fdb.db, 'users/' + refPhone));
+                    if(refSnap.exists() && refSnap.val().activePackage !== "none") {
+                        hasActiveReferral = true;
+                        break;
+                    }
+                }
+            }
+
+            if(hasActiveReferral) {
+                msgEl.innerHTML = `<i class="fas fa-unlock"></i> Withdrawal Unlocked: Eligibility verified.`;
+                msgEl.style.color = "var(--success-green)";
+                btn.disabled = false;
+                btn.style.opacity = "1";
+            } else {
+                msgEl.innerHTML = `<i class="fas fa-lock"></i> Locked: You need 1 active referral to withdraw.`;
+                msgEl.style.color = "var(--error-red)";
+                btn.disabled = true;
+                btn.style.opacity = "0.5";
+            }
+        },
+
+        handleWithdraw() {
+            const amount = parseFloat(document.getElementById('ui-balance').innerText);
+            if(amount < 100) return alert("Minimum withdrawal is $100");
+            alert("Request sent! Our team will process your payout within 24-48 hours.");
+        },
+
+        logout() {
+            localStorage.clear();
+            location.reload();
+        }
+    };
+
+    const adminLogic = {
+        trigger() {
+            logoClickCount++;
+            clearTimeout(logoTimer);
+            logoTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
+
+            if(logoClickCount >= 5) {
+                const pass = prompt("Enter Administration Password:");
+                if(pass === "admin1234") {
+                    appLogic.switchView('admin');
+                } else {
+                    alert("Access Denied.");
+                }
+                logoClickCount = 0;
+            }
+        },
+
+        async updateUser() {
+            const target = document.getElementById('admin-target-phone').value.replace(/\s+/g, '');
+            const pkg = document.getElementById('admin-pkg-select').value;
+            const profit = document.getElementById('admin-daily-profit').value;
+
+            if(!target) return alert("Enter target phone!");
+
+            const userRef = window.fdb.ref(window.fdb.db, 'users/' + target);
+            const snap = await window.fdb.get(userRef);
+
+            if(!snap.exists()) return alert("User not found in database!");
+
+            await window.fdb.update(userRef, {
+                activePackage: pkg,
+                dailyProfit: parseFloat(profit || 0)
+            });
+
+            alert(`Success! User ${target} updated.`);
+        }
+    };
+
+    // Auto-login
+    window.onload = async () => {
+        const saved = localStorage.getItem('energy_uid');
+        if(saved) {
+            const snap = await window.fdb.get(window.fdb.ref(window.fdb.db, 'users/' + saved));
+            if(snap.exists()) {
+                currentUserId = saved;
+                appLogic.enterApp(snap.val());
+            }
+        }
+    };
+</script>
+
+</body>
+</html>
