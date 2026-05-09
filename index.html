@@ -74,7 +74,7 @@
             display: none;
             flex: 1;
             padding: 25px 20px;
-            padding-bottom: 90px; /* Space for bottom nav */
+            padding-bottom: 90px;
             animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -702,10 +702,13 @@
             </h1>
             <p style="font-size: 12px; color: var(--text-gray);">USDT (Tether USD)</p>
             
-            <div id="withdrawal-status-container" style="margin-top: 25px; padding: 12px; border-radius: var(--border-radius-sm); background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05);">
+            <div id="withdrawal-status-container" style="display: none; margin-top: 25px; padding: 12px; border-radius: var(--border-radius-sm); background: rgba(255, 77, 77, 0.2); border: 1px solid rgba(255, 77, 77, 0.3);">
                 <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px;">
                     <i id="lock-icon" class="fas fa-lock" style="color: var(--error-red);"></i>
-                    <span id="lock-text" style="color: var(--text-gray);">Checking eligibility...</span>
+                    <span id="lock-text" style="color: var(--error-red); text-align: left;">
+                        <strong>Withdrawal Locked!</strong><br>
+                        You need at least 1 invited person with an active package to unlock withdrawals.
+                    </span>
                 </div>
             </div>
 
@@ -721,7 +724,7 @@
                 <button class="btn" onclick="appLogic.showToast('Please visit the Store to make a deposit and buy a package.', 'info')">
                     <i class="fas fa-arrow-down"></i> Deposit
                 </button>
-                <button class="btn btn-outline" id="btn-withdraw" onclick="appLogic.withdraw()" disabled>
+                <button class="btn btn-outline" id="btn-withdraw" onclick="appLogic.withdraw()">
                     <i class="fas fa-arrow-up"></i> Withdraw
                 </button>
             </div>
@@ -835,7 +838,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
     import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
 
-    // Your original project config
     const firebaseConfig = {
         apiKey: "AIzaSyBMktDAVXxUgLbCyBiL9c_l6FDWQ8yqADc",
         authDomain: "energyonemilions.firebaseapp.com",
@@ -859,9 +861,6 @@
 </script>
 
 <script>
-    /**
-     * Definition of all available investment packages
-     */
     const energyPackages = [
         { id: 'basic1', name: 'Basic 1', price: 100, daily: 7, monthly: 210 },
         { id: 'basic2', name: 'Basic 2', price: 300, daily: 15, monthly: 450 },
@@ -874,19 +873,13 @@
 
     const appLogic = {
         
-        // State variables
         adminClickCount: 0,
         adminClickTimer: null,
         currentUserData: null,
-        withdrawalUnlocked: false,
+        withdrawalUnlocked: false, // Default state is locked, but hidden from UI initially
 
-        /**
-         * System Initialization
-         */
         init() {
             this.renderPackages();
-            
-            // Check if user is already logged in via localStorage
             if(localStorage.getItem('isLoggedIn') === 'true') {
                 this.loadLocalData();
                 this.startDatabaseListener();
@@ -894,9 +887,6 @@
             }
         },
 
-        /**
-         * Custom Toast Notification System
-         */
         showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -915,9 +905,6 @@
             }, 3500);
         },
 
-        /**
-         * View Controllers
-         */
         switchAuthView(viewName) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(`${viewName}-view`).classList.add('active');
@@ -926,7 +913,6 @@
         navTo(tabName) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
             document.getElementById(`${tabName}-view`).classList.add('active');
             event.currentTarget.classList.add('active');
         },
@@ -936,18 +922,13 @@
             document.getElementById('register-view').classList.remove('active');
             document.getElementById('admin-view').classList.remove('active');
             document.getElementById('bottom-nav').style.display = 'flex';
-            
             document.getElementById('profile-view').classList.add('active');
             document.querySelectorAll('.nav-item')[0].classList.add('active');
         },
 
-        /**
-         * Render Store Packages dynamically
-         */
         renderPackages() {
             const container = document.getElementById('packages-container');
             container.innerHTML = '';
-            
             energyPackages.forEach(pkg => {
                 container.innerHTML += `
                     <div class="package-card">
@@ -971,9 +952,6 @@
             });
         },
 
-        /**
-         * Utilities
-         */
         validatePassword(password) {
             if(password.length < 6 || password.length > 12) {
                 this.showToast("Password must be between 6 and 12 characters.", "error");
@@ -987,9 +965,6 @@
             return phone.substring(0, 4) + "****" + phone.substring(phone.length - 3);
         },
 
-        /**
-         * Authentication Logic: Register
-         */
         async register() {
             const btn = document.getElementById('btn-register');
             const name = document.getElementById('reg-name').value;
@@ -1019,7 +994,6 @@
                     return;
                 }
 
-                // Default struct structure, including activePackage and dailyProfit tracking
                 await window.fset(userRef, {
                     fullName: name,
                     phone: fullPhone,
@@ -1037,12 +1011,10 @@
                 
                 this.showToast("Welcome to green energy! Registration successful.", "success");
                 
-                // Track upline if code was used (Update upline's team size locally)
                 if(inviteCode && inviteCode !== "none") {
                     this.processReferralSignup(inviteCode);
                 }
 
-                // Save session
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('uid', dbKey);
                 localStorage.setItem('userPhone', fullPhone);
@@ -1061,7 +1033,6 @@
         },
 
         async processReferralSignup(inviteCode) {
-            // Find user with myCode == inviteCode to increment teamSize
             const usersRef = window.fref(window.fdb, 'users');
             const snap = await window.fget(usersRef);
             if(snap.exists()) {
@@ -1078,9 +1049,6 @@
             }
         },
 
-        /**
-         * Authentication Logic: Login
-         */
         async login() {
             const btn = document.getElementById('btn-login');
             const countryCode = document.getElementById('login-country-code').value;
@@ -1130,9 +1098,6 @@
             location.reload();
         },
 
-        /**
-         * Data Loading & Listeners
-         */
         loadLocalData() {
             const phone = localStorage.getItem('userPhone') || '';
             const code = localStorage.getItem('myCode') || '';
@@ -1154,11 +1119,9 @@
                 if(data) {
                     this.currentUserData = data;
 
-                    // Update UI balances
                     const bal = parseFloat(data.balance || 0).toFixed(2);
                     document.getElementById('wallet-balance').innerText = bal;
                     
-                    // Update Package UI
                     const pkgBadge = document.getElementById('display-package-badge');
                     if(data.activePackage && data.activePackage !== "none") {
                         pkgBadge.className = 'badge badge-active';
@@ -1168,29 +1131,23 @@
                         pkgBadge.innerText = 'No Active Package';
                     }
                     
-                    // Update Affiliate UI
                     document.getElementById('display-team-size').innerText = data.teamSize || "0";
                     document.getElementById('affiliate-team-size').innerText = data.teamSize || "0";
                     document.getElementById('affiliate-earned').innerText = "$ " + parseFloat(data.earnedFromTeam || 0).toFixed(2);
 
-                    // Core Logic Checkers
                     this.processDailyProfit(uid, data);
                     this.verifyWithdrawalEligibility(data.myCode);
                 }
             });
         },
 
-        /**
-         * FEATURE: Auto 24h Daily Profit
-         * Adds daily profit to balance if 24 hours have passed since last update
-         */
         async processDailyProfit(uid, data) {
             if (!data.activePackage || data.activePackage === "none") return;
             if (!data.dailyProfit || parseFloat(data.dailyProfit) <= 0) return;
 
             const lastUpdate = data.lastProfitUpdate || Date.now();
             const now = Date.now();
-            const msInDay = 24 * 60 * 60 * 1000; // 86400000 ms
+            const msInDay = 24 * 60 * 60 * 1000;
 
             if (now - lastUpdate >= msInDay) {
                 const daysPassed = Math.floor((now - lastUpdate) / msInDay);
@@ -1210,17 +1167,10 @@
         },
 
         /**
-         * FEATURE: Withdrawal Lock Logic
-         * Checks if ANY user registered with your code has an active package.
+         * Checks referral status silently in background
          */
         async verifyWithdrawalEligibility(myCode) {
-            const btn = document.getElementById('btn-withdraw');
-            const icon = document.getElementById('lock-icon');
-            const text = document.getElementById('lock-text');
-            const container = document.getElementById('withdrawal-status-container');
-
             if(!myCode) return;
-
             try {
                 const usersRef = window.fref(window.fdb, 'users');
                 const snap = await window.fget(usersRef);
@@ -1239,35 +1189,21 @@
                 }
 
                 this.withdrawalUnlocked = hasQualifiedReferral;
-
+                
+                // If they previously triggered the error, but just now got a referral, hide the error.
                 if(hasQualifiedReferral) {
-                    btn.disabled = false;
-                    icon.className = "fas fa-unlock";
-                    icon.style.color = "var(--success-green)";
-                    text.innerText = "Withdrawal Unlocked: Active referral verified.";
-                    text.style.color = "var(--text-light)";
-                    container.style.borderColor = "rgba(46, 204, 113, 0.3)";
-                } else {
-                    btn.disabled = true;
-                    icon.className = "fas fa-lock";
-                    icon.style.color = "var(--error-red)";
-                    text.innerText = "Locked: Need at least 1 referral with an active package.";
-                    text.style.color = "var(--error-red)";
-                    container.style.borderColor = "rgba(255, 77, 77, 0.2)";
+                    document.getElementById('withdrawal-status-container').style.display = 'none';
                 }
+
             } catch(e) {
                 console.error("Eligibility check failed:", e);
             }
         },
 
         /**
-         * Withdrawal Execution
+         * Triggered when user clicks Withdraw
          */
         async withdraw() {
-            if(!this.withdrawalUnlocked) {
-                return this.showToast("Withdrawal is locked. Check requirements.", "error");
-            }
-
             const balance = parseFloat(document.getElementById('wallet-balance').innerText);
             const withdrawAddress = document.getElementById('withdraw-address').value.trim();
             const uid = localStorage.getItem('uid'); 
@@ -1277,8 +1213,15 @@
                 return this.showToast("Please enter a valid crypto wallet address!", "error");
             }
 
+            // CHECK 1: Must have 100 USDT
             if(balance < 100) {
                 return this.showToast("Minimum withdrawal amount is 100 USDT.", "error");
+            }
+
+            // CHECK 2: Must have an active referral (THIS IS WHERE WE SHOW THE RED WARNING)
+            if(!this.withdrawalUnlocked) {
+                document.getElementById('withdrawal-status-container').style.display = 'block';
+                return this.showToast("Withdrawal locked! See requirements above.", "error");
             }
 
             const btn = document.getElementById('btn-withdraw');
@@ -1286,7 +1229,6 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
             try {
-                // Record withdrawal request
                 const requestId = 'req_' + Date.now();
                 await window.fset(window.fref(window.fdb, 'withdrawals/' + requestId), {
                     userPhone: phone,
@@ -1297,7 +1239,6 @@
                     timestamp: new Date().toISOString()
                 });
 
-                // Deduct balance
                 await window.fupdate(window.fref(window.fdb, 'users/' + uid), {
                     balance: 0
                 });
@@ -1312,20 +1253,16 @@
             }
         },
 
-        /**
-         * FEATURE: Hidden Admin Panel Logic
-         */
         adminTriggerClick() {
             this.adminClickCount++;
             clearTimeout(this.adminClickTimer);
             
-            // Reset count after 1.5 seconds of inactivity
             this.adminClickTimer = setTimeout(() => { 
                 this.adminClickCount = 0; 
             }, 1500);
 
             if(this.adminClickCount >= 5) {
-                this.adminClickCount = 0; // reset
+                this.adminClickCount = 0; 
                 const pass = prompt("System Administrator Authentication Required:\nEnter Password:");
                 
                 if(pass === "admin123") {
@@ -1345,7 +1282,6 @@
             
             if(!phoneRaw) return this.showToast("Enter a target phone number.", "error");
             
-            // Format phone to match dbKey (strip plus and spaces)
             const dbKey = phoneRaw.replace(/\s+/g, '').replace('+', '');
             const profit = parseFloat(profitStr) || 0;
 
@@ -1357,16 +1293,14 @@
                     return this.showToast(`User ${dbKey} not found in database.`, "error");
                 }
 
-                // Update user
                 await window.fupdate(userRef, {
                     activePackage: pkg,
                     dailyProfit: profit,
-                    lastProfitUpdate: Date.now() // Reset timer on admin update
+                    lastProfitUpdate: Date.now() 
                 });
 
                 this.showToast(`User updated successfully! Package: ${pkg}, Daily: $${profit}`, "success");
                 
-                // Clear fields
                 document.getElementById('admin-target-phone').value = '';
                 document.getElementById('admin-package-select').value = 'none';
                 document.getElementById('admin-daily-profit').value = '';
@@ -1376,15 +1310,11 @@
             }
         },
 
-        /**
-         * Modals & Utilities
-         */
         openPaymentModal(pkgName, price) {
             document.getElementById('modal-pkg-name').innerText = `${pkgName} - ${price} USDT`;
             
             const overlay = document.getElementById('payment-modal');
             overlay.style.display = 'flex';
-            // Slight delay to allow display:flex to apply before adding opacity class
             setTimeout(() => overlay.classList.add('show'), 10);
         },
 
@@ -1414,7 +1344,6 @@
         }
     };
 
-    // Initialize application when DOM loads
     window.addEventListener('DOMContentLoaded', () => {
         appLogic.init();
     });
