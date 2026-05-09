@@ -1,185 +1,426 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invest In Energy ⚡️</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Invest In Energy Pro ⚡️</title>
+    
+    <!-- External Resources -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
+        /* --- CSS VARIABLES & THEME --- */
         :root {
-            --dark-green: #082b1c; --dark-green-light: #12452f;
-            --bright-yellow: #FFD700; --yellow-hover: #e6c200;
-            --text-light: #ffffff; --text-gray: #a0aab2;
-            --success: #2ecc71; --danger: #e74c3c;
+            --primary: #FFD700;
+            --primary-dark: #b89b00;
+            --bg-deep: #05160f;
+            --bg-card: #0c2d1e;
+            --bg-input: #123d2a;
+            --text-main: #ffffff;
+            --text-muted: #a0aab2;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        /* --- GLOBAL STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background-color: var(--bg-deep); 
+            color: var(--text-main); 
+            font-family: 'Montserrat', sans-serif; 
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
 
-        body { background-color: var(--dark-green); color: var(--text-light); display: flex; justify-content: center; min-height: 100vh; }
+        /* --- LAYOUT --- */
+        #app-wrapper {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-deep);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,0,0,1);
+        }
 
-        #app-container { width: 100%; max-width: 480px; background-color: var(--dark-green); position: relative; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+        /* --- ANIMATIONS --- */
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes glow { 0% { box-shadow: 0 0 5px var(--primary); } 50% { box-shadow: 0 0 20px var(--primary); } 100% { box-shadow: 0 0 5px var(--primary); } }
 
-        .view { display: none; flex: 1; padding: 20px; padding-bottom: 80px; animation: fadeIn 0.3s ease; }
+        /* --- VIEWS MANAGEMENT --- */
+        .view {
+            display: none;
+            padding: 25px;
+            padding-bottom: 100px;
+            animation: slideUp 0.4s ease-out;
+            flex: 1;
+        }
         .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        h1, h2, h3 { color: var(--bright-yellow); margin-bottom: 15px; }
-        .text-center { text-align: center; }
-        .logo-title { font-size: 32px; font-weight: 800; margin-top: 20px; margin-bottom: 10px; cursor: pointer; user-select: none; }
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); }
+        .logo-section { text-align: center; padding: 40px 0 20px; }
+        .logo-text { font-size: 28px; font-weight: 800; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
 
-        .hero-image { width: 100%; max-width: 320px; display: block; margin: 0 auto 20px; border-radius: 15px; }
+        /* --- SVG DESIGN --- */
+        .hero-graphic {
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+            display: block;
+            filter: drop-shadow(0 0 10px var(--primary));
+        }
 
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 14px; color: var(--text-gray); margin-bottom: 8px; }
-        .input-wrapper { display: flex; align-items: center; background: var(--dark-green-light); border-radius: 10px; padding: 12px 15px; border: 1px solid transparent; transition: 0.3s; }
-        .input-wrapper:focus-within { border-color: var(--bright-yellow); }
-        .input-wrapper i { color: var(--bright-yellow); margin-right: 10px; }
-        input, select { width: 100%; background: transparent; border: none; color: white; outline: none; font-size: 16px; }
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: var(--transition);
+        }
+        .glass-card:hover { border-color: var(--primary); }
 
-        .btn { width: 100%; background-color: var(--bright-yellow); color: var(--dark-green); border: none; padding: 16px; font-size: 16px; font-weight: 800; border-radius: 10px; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
-        .btn:hover { background-color: var(--yellow-hover); }
-        .btn-outline { background: transparent; color: var(--bright-yellow); border: 2px solid var(--bright-yellow); }
-        .btn-outline:disabled { border-color: var(--text-gray); color: var(--text-gray); cursor: not-allowed; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: var(--bg-input); padding: 15px; border-radius: 15px; text-align: center; }
+        .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+        .stat-value { font-size: 18px; font-weight: 700; color: var(--primary); }
 
-        .switch-link { text-align: center; margin-top: 20px; color: var(--text-gray); cursor: pointer; }
-        .switch-link span { color: var(--bright-yellow); font-weight: 600; }
+        /* --- FORMS --- */
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; margin-left: 5px; }
+        .field-box {
+            display: flex;
+            align-items: center;
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 0 15px;
+            height: 55px;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+        .field-box:focus-within { border-color: var(--primary); background: #164a33; }
+        .field-box i { color: var(--primary); margin-right: 15px; font-size: 18px; width: 25px; text-align: center; }
+        .field-box input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            width: 100%;
+            font-size: 16px;
+            outline: none;
+            font-family: 'Montserrat', sans-serif;
+        }
 
-        #bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background-color: var(--dark-green-light); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid rgba(255, 215, 0, 0.2); z-index: 1000; }
-        .nav-item { text-align: center; color: var(--text-gray); cursor: pointer; font-size: 12px; transition: 0.3s; }
-        .nav-item i { display: block; font-size: 20px; margin-bottom: 4px; }
-        .nav-item.active { color: var(--bright-yellow); }
+        /* --- BUTTONS --- */
+        .btn-main {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--bg-deep);
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+        }
+        .btn-main:active { transform: scale(0.97); }
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            margin-top: 15px;
+        }
 
-        .card { background: var(--dark-green-light); border-radius: 12px; padding: 20px; margin-bottom: 15px; border-left: 4px solid var(--bright-yellow); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        
-        .package-card { background: linear-gradient(145deg, var(--dark-green-light), #1a5c40); border-radius: 12px; padding: 20px; margin-bottom: 20px; position: relative; }
-        .package-title { font-size: 22px; font-weight: 800; color: var(--bright-yellow); }
-        .package-price { font-size: 28px; margin: 10px 0; }
-        
-        /* ADMIN PANEL STYLES */
-        .admin-box { border: 2px dashed var(--danger); padding: 20px; border-radius: 10px; margin-top: 20px; background: rgba(231, 76, 60, 0.1); }
-        .admin-title { color: var(--danger); text-align: center; }
+        /* --- NAVIGATION --- */
+        #bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 500px;
+            height: 80px;
+            background: rgba(12, 45, 30, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+            z-index: 1000;
+        }
+        .nav-link {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            flex: 1;
+        }
+        .nav-link i { display: block; font-size: 24px; margin-bottom: 4px; }
+        .nav-link.active { color: var(--primary); transform: translateY(-5px); }
+
+        /* --- PACKAGE LIST --- */
+        .pkg-card {
+            background: linear-gradient(145deg, #0e3524, #081e14);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        .pkg-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 70%);
+        }
+        .pkg-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .pkg-title { font-size: 20px; color: var(--primary); }
+        .pkg-price { font-size: 24px; font-weight: 800; }
+        .pkg-features { list-style: none; margin-bottom: 20px; }
+        .pkg-features li { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; display: flex; align-items: center; }
+        .pkg-features li i { color: var(--accent-green); margin-right: 10px; }
+
+        /* --- ADMIN OVERLAY --- */
+        .admin-zone {
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px dashed var(--accent-red);
+            padding: 20px;
+            border-radius: 20px;
+        }
+
+        /* --- SPLASH SCREEN --- */
+        #splash {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-deep);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
 
-<div id="app-container">
+<div id="app-wrapper">
 
-    <!-- LOGIN VIEW -->
+    <!-- SPLASH SCREEN -->
+    <div id="splash">
+        <h1 style="font-size: 30px; margin-bottom: 20px;">Invest Energy</h1>
+        <div class="loader-bar" style="width: 200px; height: 4px; background: #123d2a; border-radius: 10px; overflow: hidden;">
+            <div id="loader-progress" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.5s;"></div>
+        </div>
+    </div>
+
+    <!-- VIEW: LOGIN -->
     <div id="login-view" class="view active">
-        <!-- 3 клика върху заглавието отварят Admin Panel -->
-        <h1 class="logo-title text-center" onclick="appLogic.triggerAdminLogin()">Invest In Energy</h1>
-        <img src="https://i.ibb.co/L6S9z0m/image-2.png" alt="Car Charging" class="hero-image">
-        <p class="text-center" style="color: var(--text-gray); margin-bottom: 30px;">Login to your account</p>
+        <div class="logo-section">
+            <h1 class="logo-text" onclick="Core.triggerAdmin()">⚡ ENERGY PRO</h1>
+            <p style="color: var(--text-muted); font-size: 12px;">Sustainable Investment Portal</p>
+        </div>
 
-        <div class="form-group">
-            <div class="input-wrapper">
-                <i class="fas fa-phone"></i>
-                <input type="tel" id="login-phone" placeholder="Phone (e.g. 359871234567)">
+        <svg class="hero-graphic" viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#b89b00;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <!-- Car Body -->
+            <path d="M40 90 L40 70 C40 55, 60 50, 80 50 L140 40 C170 35, 200 45, 210 70 L220 90 Z" fill="none" stroke="url(#grad1)" stroke-width="4" />
+            <!-- Wheels -->
+            <circle cx="70" cy="100" r="15" fill="none" stroke="url(#grad1)" stroke-width="3" />
+            <circle cx="180" cy="100" r="15" fill="none" stroke="url(#grad1)" stroke-width="3" />
+            <!-- Charging Station -->
+            <rect x="230" y="30" width="10" height="70" rx="2" fill="none" stroke="#2ecc71" stroke-width="2" />
+            <path d="M230 65 L215 65" stroke="#2ecc71" stroke-width="2" stroke-dasharray="5,5" />
+            <path d="M110 65 L130 55 L130 75 L150 65" fill="none" stroke="var(--primary)" stroke-width="2" />
+        </svg>
+
+        <div class="input-group">
+            <label>Телефонен Номер</label>
+            <div class="field-box">
+                <i class="fas fa-phone-alt"></i>
+                <input type="tel" id="auth-phone" placeholder="359XXXXXXXXX">
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="input-wrapper">
-                <i class="fas fa-lock"></i>
-                <input type="password" id="login-password" placeholder="Password">
+        <div class="input-group">
+            <label>Парола</label>
+            <div class="field-box">
+                <i class="fas fa-key"></i>
+                <input type="password" id="auth-pass" placeholder="••••••••">
             </div>
         </div>
 
-        <button class="btn" onclick="appLogic.login()">Login</button>
-        <p class="switch-link" onclick="appLogic.switchAuthView('register')">Don't have an account? <span>Register here</span></p>
-    </div>
-
-    <!-- REGISTER VIEW -->
-    <div id="register-view" class="view">
-        <h1 class="logo-title text-center">Invest In Energy</h1>
-        <img src="https://i.ibb.co/L6S9z0m/image-2.png" alt="Car Charging" class="hero-image">
-
-        <div class="form-group"><div class="input-wrapper"><i class="fas fa-user"></i><input type="text" id="reg-name" placeholder="Full Name"></div></div>
-        <div class="form-group"><div class="input-wrapper"><i class="fas fa-phone"></i><input type="tel" id="reg-phone" placeholder="Phone (359...)"></div></div>
-        <div class="form-group"><div class="input-wrapper"><i class="fas fa-ticket-alt"></i><input type="text" id="reg-invite" placeholder="Invite Code (Optional)"></div></div>
-        <div class="form-group"><div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="reg-password" placeholder="Password"></div></div>
-
-        <button class="btn" onclick="appLogic.register()">Register</button>
-        <p class="switch-link" onclick="appLogic.switchAuthView('login')">Already have an account? <span>Login here</span></p>
-    </div>
-
-    <!-- PROFILE VIEW -->
-    <div id="profile-view" class="view">
-        <h2 class="text-center">My Profile</h2>
-        <div class="card text-center" style="margin-top: 20px;">
-            <i class="fas fa-user-circle" style="font-size: 50px; color: var(--text-gray); margin-bottom: 10px;"></i>
-            <h3 id="display-phone" style="letter-spacing: 2px;"></h3>
-            <p style="color: var(--bright-yellow); font-size: 14px;" id="display-package">No Active Package</p>
-        </div>
-        <button class="btn btn-outline" onclick="appLogic.logout()" style="margin-top: 20px;"><i class="fas fa-sign-out-alt"></i> Logout</button>
-    </div>
-
-    <!-- WALLET VIEW -->
-    <div id="wallet-view" class="view">
-        <h2 class="text-center">My Wallet</h2>
-        <div class="card text-center">
-            <p style="color: var(--text-gray); font-size: 14px;">Withdrawable Balance (USDT)</p>
-            <h1 style="font-size: 40px; margin: 10px 0;">$ <span id="wallet-balance">0.00</span></h1>
-            
-            <p id="withdraw-status" style="font-size: 12px; color: var(--danger); margin-bottom: 15px;">
-                <i class="fas fa-lock"></i> Withdrawals locked. Invite 1 active user to unlock.
-            </p>
-
-            <div class="form-group" style="text-align: left;">
-                <label>Withdrawal Crypto Address (USDT)</label>
-                <div class="input-wrapper" style="background: rgba(0,0,0,0.2);">
-                    <i class="fas fa-link"></i>
-                    <input type="text" id="withdraw-address" placeholder="Paste wallet address...">
-                </div>
-            </div>
-
-            <button class="btn btn-outline" id="btn-withdraw" onclick="appLogic.withdraw()"><i class="fas fa-arrow-up"></i> Withdraw</button>
-        </div>
-    </div>
-
-    <!-- ADMIN VIEW (HIDDEN) -->
-    <div id="admin-view" class="view">
-        <h2 class="admin-title"><i class="fas fa-shield-alt"></i> CONTROL PANEL</h2>
+        <button class="btn-main" onclick="Auth.login()">
+            <span>ВХОД В СИСТЕМАТА</span>
+            <i class="fas fa-sign-in-alt"></i>
+        </button>
         
-        <div class="admin-box">
-            <h3 style="color: white; font-size: 16px;">Approve Deposit & Assign Package</h3>
-            <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 15px;">This will assign the package and automatically unlock the referrer's withdrawals.</p>
-            
-            <div class="form-group">
-                <label style="color: white;">User Phone (ex. 359871234567)</label>
-                <div class="input-wrapper"><input type="text" id="admin-target-phone" placeholder="Enter user phone"></div>
-            </div>
+        <p style="text-align: center; margin-top: 25px; color: var(--text-muted);">
+            Нямате акаунт? <span style="color: var(--primary); cursor: pointer; font-weight: 700;" onclick="UI.setView('register')">Регистрирайте се</span>
+        </p>
+    </div>
 
-            <div class="form-group">
-                <label style="color: white;">Select Package</label>
-                <div class="input-wrapper">
-                    <select id="admin-pkg-select">
-                        <option value="basic1">Basic 1 (7 USDT/day)</option>
-                        <option value="basic2">Basic 2 (15 USDT/day)</option>
-                        <option value="vip1">VIP 1 (100 USDT/day)</option>
+    <!-- VIEW: REGISTER -->
+    <div id="register-view" class="view">
+        <h2 style="margin-bottom: 20px;">Регистрация</h2>
+        <div class="input-group">
+            <label>Пълно Име</label>
+            <div class="field-box"><i class="fas fa-user"></i><input type="text" id="reg-name" placeholder="Иван Иванов"></div>
+        </div>
+        <div class="input-group">
+            <label>Телефон</label>
+            <div class="field-box"><i class="fas fa-phone"></i><input type="tel" id="reg-phone" placeholder="359..."></div>
+        </div>
+        <div class="input-group">
+            <label>Покана (Инвайт код)</label>
+            <div class="field-box"><i class="fas fa-gift"></i><input type="text" id="reg-invite" placeholder="EV-XXXX"></div>
+        </div>
+        <div class="input-group">
+            <label>Парола</label>
+            <div class="field-box"><i class="fas fa-lock"></i><input type="password" id="reg-pass" placeholder="Минимум 6 символа"></div>
+        </div>
+        <button class="btn-main" onclick="Auth.register()">СЪЗДАЙ АКАУНТ</button>
+        <button class="btn-main btn-secondary" onclick="UI.setView('login')">НАЗАД</button>
+    </div>
+
+    <!-- VIEW: DASHBOARD (HOME) -->
+    <div id="home-view" class="view">
+        <div class="glass-card">
+            <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Добре дошли,</p>
+            <h3 id="user-display-name" style="color: #fff;">Потребител</h3>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-box">
+                <div class="stat-label">Баланс</div>
+                <div class="stat-value">$ <span id="dash-balance">0.00</span></div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Активен План</div>
+                <div class="stat-value" id="dash-plan" style="font-size: 14px;">NONE</div>
+            </div>
+        </div>
+
+        <h3 style="font-size: 14px; margin-bottom: 15px;"><i class="fas fa-bolt"></i> Налични Енергийни Планове</h3>
+        
+        <div id="package-container">
+            <!-- Плановете ще се заредят тук през JS -->
+        </div>
+    </div>
+
+    <!-- VIEW: TEAM -->
+    <div id="team-view" class="view">
+        <h2>Моят Екип</h2>
+        <div class="glass-card text-center">
+            <div class="stat-label">Вашият реферален код</div>
+            <div class="stat-value" id="my-referral-code" style="font-size: 24px; margin: 10px 0; letter-spacing: 5px;">---</div>
+            <button class="btn-main btn-secondary" style="height: 40px; font-size: 12px;" onclick="UI.copyRef()">КОПИРАЙ КОД</button>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-box">
+                <div class="stat-label">Партньори</div>
+                <div class="stat-value" id="team-count">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Бонус Доход</div>
+                <div class="stat-value">$ 0.00</div>
+            </div>
+        </div>
+
+        <h3 style="font-size: 14px; margin-bottom: 15px;">Списък на екипа</h3>
+        <div id="team-list" style="color: var(--text-muted); text-align: center; font-size: 12px; padding: 20px;">
+            Все още нямате поканени партньори.
+        </div>
+    </div>
+
+    <!-- VIEW: WALLET -->
+    <div id="wallet-view" class="view">
+        <h2>Портфейл</h2>
+        <div class="glass-card" style="text-align: center; padding: 40px 20px;">
+            <div class="stat-label">Общо за теглене</div>
+            <div class="stat-value" style="font-size: 40px;">$ <span id="wallet-total">0.00</span></div>
+        </div>
+
+        <div id="withdraw-lock-msg" class="glass-card" style="border-left: 4px solid var(--accent-red); display: none;">
+            <p style="font-size: 12px; color: var(--accent-red);">
+                <i class="fas fa-exclamation-triangle"></i> Системата изисква поне 1 активен реферал за отключване на тегленията.
+            </p>
+        </div>
+
+        <div class="input-group">
+            <label>USDT Адрес (Network: TRC20)</label>
+            <div class="field-box"><i class="fas fa-wallet"></i><input type="text" id="withdraw-address" placeholder="T..."></div>
+        </div>
+
+        <button class="btn-main" id="btn-withdraw-action" onclick="Finance.requestWithdrawal()">
+            <i class="fas fa-paper-plane"></i> ЗАЯВИ ТЕГЛЕНЕ
+        </button>
+
+        <h3 style="font-size: 14px; margin: 25px 0 15px;">Последни Транзакции</h3>
+        <div id="transaction-history" style="font-size: 12px; color: var(--text-muted);">
+            Няма намерени записи.
+        </div>
+    </div>
+
+    <!-- VIEW: ADMIN -->
+    <div id="admin-view" class="view">
+        <h2 style="color: var(--accent-red);">Master Control</h2>
+        <div class="admin-zone">
+            <div class="input-group">
+                <label>Търси потребител (Телефон)</label>
+                <div class="field-box"><input type="text" id="adm-search-phone"></div>
+            </div>
+            <div class="input-group">
+                <label>Избери Пакет</label>
+                <div class="field-box">
+                    <select id="adm-pkg-select" style="width: 100%; background: transparent; color: #fff; border: none; outline: none;">
+                        <option value="p1">Solar Basic ($7/day)</option>
+                        <option value="p2">Wind Power ($18/day)</option>
+                        <option value="p3">Hydro Pro ($45/day)</option>
+                        <option value="p4">Nuclear Giga ($120/day)</option>
                     </select>
                 </div>
             </div>
-
-            <button class="btn" style="background-color: var(--danger); color: white;" onclick="appLogic.adminGrantPackage()">Confirm Payment & Assign</button>
+            <button class="btn-main" style="background: var(--accent-red); color: #fff;" onclick="Admin.activateUser()">АКТИВИРАЙ И ОТКЛЮЧИ</button>
         </div>
-        <button class="btn btn-outline" onclick="appLogic.logout()" style="margin-top: 20px;">Exit Admin</button>
+        <button class="btn-main btn-secondary" onclick="UI.setView('home')">ЗАТВОРИ</button>
     </div>
 
     <!-- BOTTOM NAV -->
     <nav id="bottom-nav" style="display: none;">
-        <div class="nav-item active" onclick="appLogic.navTo('profile')"><i class="fas fa-user"></i>Profile</div>
-        <div class="nav-item" onclick="appLogic.navTo('wallet')"><i class="fas fa-wallet"></i>Wallet</div>
+        <div class="nav-link active" onclick="UI.nav('home')"><i class="fas fa-charging-station"></i>Инвестирай</div>
+        <div class="nav-link" onclick="UI.nav('team')"><i class="fas fa-users"></i>Екип</div>
+        <div class="nav-link" onclick="UI.nav('wallet')"><i class="fas fa-wallet"></i>Портфейл</div>
+        <div class="nav-link" onclick="Auth.logout()"><i class="fas fa-power-off"></i>Изход</div>
     </nav>
 
 </div>
 
-<!-- FIREBASE SDK & CONFIG (From your 2026-04-06 context) -->
+<!-- FIREBASE INTEGRATION -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-    import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+    import { getDatabase, ref, set, get, update, onValue, push } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCErWK81SVUAOTpqyXFBpXLycurWctJQvU",
@@ -193,259 +434,281 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Правим Firebase функциите глобални за да ги вижда нашият обект
-    window.fbDb = db;
-    window.fbRef = ref;
-    window.fbSet = set;
-    window.fbGet = get;
-    window.fbUpdate = update;
-    window.fbOnValue = onValue;
+    // Global Registry
+    window.db = db;
+    window.fref = ref;
+    window.fset = set;
+    window.fget = get;
+    window.fupdate = update;
+    window.fval = onValue;
+    window.fpush = push;
+
+    console.log("Firebase Engine Ready.");
 </script>
 
 <script>
-    // Дефиниция на пакетите за калкулатора
-    const packagesDb = {
-        'basic1': { name: 'Basic 1', daily: 7 },
-        'basic2': { name: 'Basic 2', daily: 15 },
-        'vip1': { name: 'VIP 1', daily: 100 }
+    /* --- CONSTANTS & DATABASE SIMULATION --- */
+    const PACKAGES = {
+        'p1': { name: 'Solar Basic', price: 50, daily: 7, period: 30, color: '#f1c40f' },
+        'p2': { name: 'Wind Power', price: 150, daily: 18, period: 30, color: '#3498db' },
+        'p3': { name: 'Hydro Pro', price: 400, daily: 45, period: 30, color: '#2ecc71' },
+        'p4': { name: 'Nuclear Giga', price: 1000, daily: 120, period: 45, color: '#e74c3c' }
     };
 
-    let adminClickCount = 0;
-
-    const appLogic = {
-        init() {
+    /* --- CORE LOGIC --- */
+    const Core = {
+        adminClicks: 0,
+        triggerAdmin() {
+            this.adminClicks++;
+            if(this.adminClicks >= 3) {
+                this.adminClicks = 0;
+                let pin = prompt("Admin Access PIN:");
+                if(pin === "9999") UI.setView('admin');
+            }
+        },
+        async start() {
+            UI.loadSplash();
             if(localStorage.getItem('isLoggedIn') === 'true') {
-                this.showMainApp();
-                this.startDatabaseListener();
-                this.syncEarnings(); // СМАРТ ДВИГАТЕЛ: Смята парите при влизане
-            }
-        },
-
-        triggerAdminLogin() {
-            adminClickCount++;
-            if(adminClickCount >= 3) {
-                adminClickCount = 0;
-                let pass = prompt("Admin Access PIN:");
-                if(pass === "9999") { // Тайната парола за админския панел
-                    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-                    document.getElementById('admin-view').classList.add('active');
-                    document.getElementById('bottom-nav').style.display = 'none';
-                }
-            }
-        },
-
-        switchAuthView(viewName) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(`${viewName}-view`).classList.add('active');
-        },
-
-        navTo(tabName) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(`${tabName}-view`).classList.add('active');
-            event.currentTarget.classList.add('active');
-        },
-
-        showMainApp() {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('profile-view').classList.add('active');
-            document.getElementById('bottom-nav').style.display = 'flex';
-            
-            document.getElementById('display-phone').innerText = localStorage.getItem('userPhone');
-        },
-
-        async register() {
-            const name = document.getElementById('reg-name').value;
-            const phone = document.getElementById('reg-phone').value;
-            const inviteCode = document.getElementById('reg-invite').value || "none";
-            const password = document.getElementById('reg-password').value;
-
-            if(!phone || !password) return alert("Fill required fields!");
-
-            const dbKey = phone.replace('+', '');
-            const myGeneratedCode = 'EN' + Math.floor(Math.random()*9000 + 1000);
-            
-            const userRef = window.fbRef(window.fbDb, 'users/' + dbKey);
-            const snapshot = await window.fbGet(userRef);
-
-            if (snapshot.exists()) {
-                alert("Phone already registered!");
+                await Finance.syncEarnings();
+                UI.initDashboard();
             } else {
-                await window.fbSet(userRef, {
-                    fullName: name,
-                    phone: phone,
-                    password: password,
-                    inviteCodeUsed: inviteCode,
-                    myCode: myGeneratedCode,
-                    balance: 0,
-                    canWithdraw: false, // ПОДРАЗБИРАНЕ: Заключено!
-                    createdAt: Date.now()
-                });
-                alert("Registered successfully!");
-                this.switchAuthView('login');
+                setTimeout(() => {
+                    document.getElementById('splash').style.display = 'none';
+                    UI.setView('login');
+                }, 2000);
             }
+        }
+    };
+
+    /* --- AUTHENTICATION --- */
+    const Auth = {
+        async register() {
+            const phone = document.getElementById('reg-phone').value;
+            const name = document.getElementById('reg-name').value;
+            const pass = document.getElementById('reg-pass').value;
+            const invite = document.getElementById('reg-invite').value || "none";
+
+            if(phone.length < 9 || pass.length < 6) return alert("Невалидни данни!");
+
+            const uKey = phone.replace('+', '');
+            const myCode = 'EV-' + Math.floor(1000 + Math.random()*9000);
+
+            const userRef = window.fref(window.db, 'users/' + uKey);
+            const snap = await window.fget(userRef);
+
+            if(snap.exists()) return alert("Телефонът вече е регистриран!");
+
+            await window.fset(userRef, {
+                name, phone, pass, myCode, inviteUsed: invite,
+                balance: 0, canWithdraw: false, activePkg: null,
+                regDate: Date.now(), team: []
+            });
+
+            alert("Успешна регистрация!");
+            UI.setView('login');
         },
 
         async login() {
-            const phone = document.getElementById('login-phone').value;
-            const password = document.getElementById('login-password').value;
-            const dbKey = phone.replace('+', '');
+            const phone = document.getElementById('auth-phone').value;
+            const pass = document.getElementById('auth-pass').value;
+            const uKey = phone.replace('+', '');
 
-            const userRef = window.fbRef(window.fbDb, 'users/' + dbKey);
-            const snapshot = await window.fbGet(userRef);
-
-            if (snapshot.exists() && snapshot.val().password === password) {
+            const snap = await window.fget(window.fref(window.db, 'users/' + uKey));
+            
+            if(snap.exists() && snap.val().pass === pass) {
                 localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('uid', dbKey);
-                localStorage.setItem('userPhone', phone);
-                this.init();
+                localStorage.setItem('uKey', uKey);
+                localStorage.setItem('uPhone', phone);
+                location.reload();
             } else {
-                alert("Wrong phone or password!");
+                alert("Грешен телефон или парола!");
             }
         },
 
         logout() {
             localStorage.clear();
             location.reload();
-        },
-
-        // --- СМАРТ ДВИГАТЕЛ ЗА ПАСИВЕН ДОХОД ---
-        async syncEarnings() {
-            const uid = localStorage.getItem('uid');
-            if(!uid) return;
-
-            const userRef = window.fbRef(window.fbDb, 'users/' + uid);
-            const snapshot = await window.fbGet(userRef);
-            
-            if(snapshot.exists()) {
-                const data = snapshot.val();
-                
-                // Има ли активен пакет?
-                if(data.activePackage && data.activePackage.id) {
-                    const now = Date.now();
-                    const lastUpdate = data.lastEarningsUpdate || data.activePackage.activatedAt;
-                    const msPerDay = 1000 * 60 * 60 * 24;
-                    
-                    // Смятаме колко пълни дни са минали
-                    const daysPassed = Math.floor((now - lastUpdate) / msPerDay);
-
-                    if(daysPassed > 0) {
-                        const dailyRate = packagesDb[data.activePackage.id].daily;
-                        const newEarnings = daysPassed * dailyRate;
-                        const newBalance = (data.balance || 0) + newEarnings;
-
-                        // Обновяваме баланса и таймера в базата
-                        await window.fbUpdate(userRef, {
-                            balance: newBalance,
-                            lastEarningsUpdate: lastUpdate + (daysPassed * msPerDay) // Преместваме таймера с точния брой дни
-                        });
-                        console.log(`Added ${newEarnings} USDT for ${daysPassed} days.`);
-                    }
-                }
-            }
-        },
-
-        startDatabaseListener() {
-            const uid = localStorage.getItem('uid');
-            const userRef = window.fbRef(window.fbDb, 'users/' + uid);
-            
-            window.fbOnValue(userRef, (snapshot) => {
-                const data = snapshot.val();
-                if(data) {
-                    // Update Balance
-                    document.getElementById('wallet-balance').innerText = data.balance ? parseFloat(data.balance).toFixed(2) : "0.00";
-                    
-                    // Update Package Display
-                    if(data.activePackage) {
-                        document.getElementById('display-package').innerText = `Active: ${packagesDb[data.activePackage.id].name}`;
-                        document.getElementById('display-package').style.color = 'var(--success)';
-                    }
-
-                    // Update Withdrawal UI Limits
-                    const wStatus = document.getElementById('withdraw-status');
-                    const wBtn = document.getElementById('btn-withdraw');
-                    
-                    if(data.canWithdraw === true) {
-                        wStatus.innerHTML = '<i class="fas fa-check-circle"></i> Withdrawals Unlocked';
-                        wStatus.style.color = 'var(--success)';
-                        wBtn.disabled = false;
-                    } else {
-                        wStatus.innerHTML = '<i class="fas fa-lock"></i> Withdrawals locked. Invite 1 active user.';
-                        wStatus.style.color = 'var(--danger)';
-                        wBtn.disabled = true;
-                    }
-                }
-            });
-        },
-
-        async withdraw() {
-            const balance = parseFloat(document.getElementById('wallet-balance').innerText);
-            const address = document.getElementById('withdraw-address').value;
-            const uid = localStorage.getItem('uid');
-
-            if(balance < 100) return alert("Minimum withdrawal is 100 USDT");
-            if(address.length < 10) return alert("Invalid Crypto Address");
-
-            const reqId = 'req_' + Date.now();
-            await window.fbSet(window.fbRef(window.fbDb, 'withdrawals/' + reqId), {
-                userPhone: localStorage.getItem('userPhone'),
-                amount: balance,
-                address: address,
-                timestamp: Date.now()
-            });
-
-            await window.fbUpdate(window.fbRef(window.fbDb, 'users/' + uid), { balance: 0 });
-            alert("Withdrawal submitted successfully!");
-            document.getElementById('withdraw-address').value = '';
-        },
-
-        // --- АДМИН ЛОГИКА ЗА АВТОМАТИЗАЦИЯ ---
-        async adminGrantPackage() {
-            const phone = document.getElementById('admin-target-phone').value.replace('+', '');
-            const pkgId = document.getElementById('admin-pkg-select').value;
-            
-            if(!phone) return alert("Enter target phone!");
-
-            const targetRef = window.fbRef(window.fbDb, 'users/' + phone);
-            const targetSnap = await window.fbGet(targetRef);
-
-            if(!targetSnap.exists()) {
-                return alert("User not found!");
-            }
-
-            const targetData = targetSnap.val();
-            const now = Date.now();
-
-            // 1. Активираме пакета на целевия потребител
-            await window.fbUpdate(targetRef, {
-                activePackage: { id: pkgId, activatedAt: now },
-                lastEarningsUpdate: now
-            });
-
-            // 2. АВТОМАТИЗАЦИЯ: Търсим канителя (upline) за да му отключим тегленето
-            const inviteCode = targetData.inviteCodeUsed;
-            if(inviteCode && inviteCode !== "none") {
-                const allUsersSnap = await window.fbGet(window.fbRef(window.fbDb, 'users'));
-                const allUsers = allUsersSnap.val();
-                
-                for(let uid in allUsers) {
-                    if(allUsers[uid].myCode === inviteCode) {
-                        // Намерихме човека! Отключваме му тегленето!
-                        await window.fbUpdate(window.fbRef(window.fbDb, `users/${uid}`), {
-                            canWithdraw: true
-                        });
-                        alert(`Success! Package added. Referral unlocked for user: ${allUsers[uid].phone}`);
-                        return;
-                    }
-                }
-            }
-
-            alert("Package added successfully! (No referrer found to unlock)");
         }
     };
 
-    // Auto-init
-    setTimeout(() => { appLogic.init(); }, 500);
+    /* --- FINANCE & SMART ENGINE --- */
+    const Finance = {
+        async syncEarnings() {
+            const uKey = localStorage.getItem('uKey');
+            const snap = await window.fget(window.fref(window.db, 'users/' + uKey));
+            const data = snap.val();
+
+            if(data && data.activePkg) {
+                const now = Date.now();
+                const lastCheck = data.lastSync || data.activePkg.date;
+                const msPerDay = 86400000;
+                const daysPassed = Math.floor((now - lastCheck) / msPerDay);
+
+                if(daysPassed > 0) {
+                    const dailyIncome = PACKAGES[data.activePkg.id].daily;
+                    const totalNewIncome = daysPassed * dailyIncome;
+                    
+                    await window.fupdate(window.fref(window.db, 'users/' + uKey), {
+                        balance: (data.balance || 0) + totalNewIncome,
+                        lastSync: lastCheck + (daysPassed * msPerDay)
+                    });
+                    console.log(`Earned: ${totalNewIncome}$ for ${daysPassed} days.`);
+                }
+            }
+        },
+
+        async requestWithdrawal() {
+            const addr = document.getElementById('withdraw-address').value;
+            const balance = parseFloat(document.getElementById('wallet-total').innerText);
+            
+            if(balance < 100) return alert("Минимално теглене: 100 USDT");
+            if(addr.length < 10) return alert("Въведете валиден USDT адрес!");
+
+            const uKey = localStorage.getItem('uKey');
+            const reqId = 'W-' + Date.now();
+
+            await window.fset(window.fref(window.db, 'withdrawals/' + reqId), {
+                uKey, amount: balance, address: addr, status: 'pending', date: Date.now()
+            });
+
+            await window.fupdate(window.fref(window.db, 'users/' + uKey), { balance: 0 });
+            alert("Заявката е изпратена за преглед!");
+        }
+    };
+
+    /* --- UI & NAVIGATION --- */
+    const UI = {
+        loadSplash() {
+            let progress = 0;
+            const bar = document.getElementById('loader-progress');
+            const interval = setInterval(() => {
+                progress += Math.random() * 30;
+                if(progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                }
+                bar.style.width = progress + '%';
+            }, 300);
+        },
+
+        setView(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(id + '-view').classList.add('active');
+            window.scrollTo(0,0);
+        },
+
+        nav(id) {
+            this.setView(id);
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        },
+
+        initDashboard() {
+            document.getElementById('splash').style.display = 'none';
+            document.getElementById('bottom-nav').style.display = 'flex';
+            this.setView('home');
+            this.renderPackages();
+            this.listenToUser();
+        },
+
+        renderPackages() {
+            const container = document.getElementById('package-container');
+            container.innerHTML = '';
+            for(let key in PACKAGES) {
+                const p = PACKAGES[key];
+                container.innerHTML += `
+                    <div class="pkg-card">
+                        <div class="pkg-header">
+                            <h3 class="pkg-title">${p.name}</h3>
+                            <div class="pkg-price">$${p.price}</div>
+                        </div>
+                        <ul class="pkg-features">
+                            <li><i class="fas fa-check-circle"></i>Дневен доход: $${p.daily}</li>
+                            <li><i class="fas fa-check-circle"></i>Период: ${p.period} дни</li>
+                            <li><i class="fas fa-check-circle"></i>Обща печалба: $${p.daily * p.period}</li>
+                        </ul>
+                        <button class="btn-main" style="height: 45px;" onclick="alert('Свържете се с администратор за покупка')">КУПИ СЕГА</button>
+                    </div>
+                `;
+            }
+        },
+
+        listenToUser() {
+            const uKey = localStorage.getItem('uKey');
+            window.fval(window.fref(window.db, 'users/' + uKey), (snap) => {
+                const data = snap.val();
+                if(!data) return;
+
+                const bal = parseFloat(data.balance || 0).toFixed(2);
+                document.getElementById('dash-balance').innerText = bal;
+                document.getElementById('wallet-total').innerText = bal;
+                document.getElementById('user-display-name').innerText = data.name;
+                document.getElementById('my-referral-code').innerText = data.myCode;
+                
+                if(data.activePkg) {
+                    document.getElementById('dash-plan').innerText = PACKAGES[data.activePkg.id].name;
+                    document.getElementById('dash-plan').style.color = 'var(--accent-green)';
+                }
+
+                if(!data.canWithdraw) {
+                    document.getElementById('withdraw-lock-msg').style.display = 'block';
+                    document.getElementById('btn-withdraw-action').style.opacity = '0.5';
+                    document.getElementById('btn-withdraw-action').disabled = true;
+                } else {
+                    document.getElementById('withdraw-lock-msg').style.display = 'none';
+                    document.getElementById('btn-withdraw-action').style.opacity = '1';
+                    document.getElementById('btn-withdraw-action').disabled = false;
+                }
+            });
+        },
+
+        copyRef() {
+            const code = document.getElementById('my-referral-code').innerText;
+            navigator.clipboard.writeText(code);
+            alert("Кодът е копиран!");
+        }
+    };
+
+    /* --- ADMIN ENGINE --- */
+    const Admin = {
+        async activateUser() {
+            const phone = document.getElementById('adm-search-phone').value;
+            const pkgId = document.getElementById('adm-pkg-select').value;
+            if(!phone) return alert("Въведете телефон!");
+
+            const uKey = phone.replace('+', '');
+            const userRef = window.fref(window.db, 'users/' + uKey);
+            const snap = await window.fget(userRef);
+
+            if(!snap.exists()) return alert("Потребителят не е намерен!");
+
+            const now = Date.now();
+            await window.fupdate(userRef, {
+                activePkg: { id: pkgId, date: now },
+                lastSync: now
+            });
+
+            // Отключване на канителя (Upline)
+            const userData = snap.val();
+            if(userData.inviteUsed && userData.inviteUsed !== "none") {
+                const allUsers = await window.fget(window.fref(window.db, 'users'));
+                const users = allUsers.val();
+                for(let key in users) {
+                    if(users[key].myCode === userData.inviteUsed) {
+                        await window.fupdate(window.fref(window.db, 'users/' + key), { canWithdraw: true });
+                        console.log("Upline unlocked: " + key);
+                        break;
+                    }
+                }
+            }
+
+            alert("Потребителят е активиран успешно!");
+        }
+    };
+
+    // START THE APP
+    window.onload = () => Core.start();
+
 </script>
 </body>
 </html>
