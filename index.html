@@ -69,7 +69,6 @@
         h1, h2, h3 { color: var(--bright-yellow); margin-bottom: 15px; }
         .text-center { text-align: center; }
         .logo-title { font-size: 32px; font-weight: 800; margin-top: 50px; margin-bottom: 10px; }
-        .logo-icon { font-size: 40px; color: var(--bright-yellow); }
 
         /* Forms & Inputs */
         .form-group { margin-bottom: 20px; }
@@ -216,6 +215,17 @@
             color: var(--bright-yellow);
         }
         .warning-text { color: var(--bright-yellow); font-size: 12px; margin-bottom: 15px; background: rgba(255,215,0,0.1); padding: 10px; border-radius: 5px;}
+        
+        /* Image styling */
+        .hero-image {
+            width: 100%; 
+            max-width: 250px; 
+            margin: 15px auto; 
+            display: block; 
+            border-radius: 12px; 
+            background: white; 
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -226,7 +236,10 @@
     <div id="login-view" class="view active">
         <div class="text-center">
             <h1 class="logo-title">Invest In Energy</h1>
-            <div class="logo-icon">⚡️</div>
+            
+            <!-- СНИМКА ЗА LOGIN -->
+            <img src="car-image.jpg" alt="Car Charging Station" class="hero-image">
+            
             <p style="color: var(--text-gray); margin-bottom: 30px;">Login to your account</p>
         </div>
 
@@ -264,8 +277,8 @@
         <div class="text-center">
             <h1 class="logo-title">Invest In Energy</h1>
             
-            <!-- ТУК Е ДОБАВЕНА СНИМКАТА (смени 'car-image.jpg' с точното име на файла си) -->
-            <img src="car-image.jpg" alt="Car Charging Station" style="width: 100%; max-width: 250px; margin: 15px auto; display: block; border-radius: 12px;">
+            <!-- СНИМКА ЗА РЕГИСТРАЦИЯ -->
+            <img src="car-image.jpg" alt="Car Charging Station" class="hero-image">
             
             <p style="color: var(--text-gray); margin-bottom: 20px;">Create new account</p>
         </div>
@@ -582,11 +595,10 @@
                             balance: 0,
                             teamSize: 0,
                             earnedFromTeam: 0,
-                            hasActiveReferral: false, // Новото поле за защита на тегленето
+                            hasActiveReferral: false, 
                             createdAt: new Date().toISOString()
                         });
                         
-                        // Новото приветствено съобщение
                         alert("Welcome to green energy Our company offers investment in car charging stations");
                         
                         localStorage.setItem('isLoggedIn', 'true');
@@ -691,18 +703,15 @@
             }
 
             try {
-                // ПРОВЕРКА: Има ли потребителят реферал със закупен пакет?
                 const userRef = window.firebaseRef(window.firebaseDb, 'users/' + uid);
                 window.firebaseOnValue(userRef, async (snapshot) => {
                     const data = snapshot.val();
                     
-                    // Ако 'hasActiveReferral' не е true, блокираме тегленето
                     if (!data || data.hasActiveReferral !== true) {
                         alert("Трябва да имате поне един човек, който се е регистрирал под вас и е закупил Basic 1, за да изтеглите средства.");
                         return;
                     }
 
-                    // Ако преминат проверката, създаваме запис за теглене
                     const requestId = 'req_' + Date.now();
                     const withdrawRef = window.firebaseRef(window.firebaseDb, 'withdrawals/' + requestId);
 
