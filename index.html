@@ -251,7 +251,7 @@
             <label>Password</label>
             <div class="input-wrapper">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="login-password" placeholder="Enter password" minlength="6" maxlength="12">
+                <input type="password" id="login-password" placeholder="Enter password">
             </div>
         </div>
 
@@ -319,15 +319,15 @@
             <div style="font-size: 50px; color: var(--text-gray); margin-bottom: 10px;">
                 <i class="fas fa-user-circle"></i>
             </div>
-            <h3 id="display-phone" style="letter-spacing: 2px;">+359 87****201</h3>
-            <p style="color: var(--text-gray);">UID: <span id="display-uid" style="color: white;">102938</span></p>
+            <h3 id="display-phone" style="letter-spacing: 2px;"></h3>
+            <p style="color: var(--text-gray);">UID: <span id="display-uid" style="color: white;"></span></p>
         </div>
 
         <div class="card">
             <div class="stat-box">
                 <div class="stat-item">
                     <div class="stat-label">My Invite Code</div>
-                    <div class="stat-value" id="display-my-code">ENERGY99</div>
+                    <div class="stat-value" id="display-my-code"></div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Invited People</div>
@@ -349,7 +349,6 @@
             <p class="stat-label">Total Balance (USDT)</p>
             <h1 style="font-size: 40px; margin: 10px 0;">$ <span id="wallet-balance">0.00</span></h1>
             
-            <!-- НОВО ПОЛЕ ЗА КРИПТО АДРЕС -->
             <div class="form-group" style="text-align: left; margin-top: 20px;">
                 <label>Withdrawal Crypto Address (USDT ERC20/TRC20)</label>
                 <div class="input-wrapper" style="background: rgba(0,0,0,0.2);">
@@ -385,7 +384,7 @@
         <div class="card" style="text-align: center; background: linear-gradient(45deg, #12452f, #1a5c40);">
             <i class="fas fa-users" style="font-size: 40px; color: var(--bright-yellow); margin-bottom: 10px;"></i>
             <p style="font-size: 14px; margin-bottom: 15px;">You receive <strong style="color: var(--bright-yellow);">10%</strong> of the daily income of everyone who registers with your code.</p>
-            <h2 id="affiliate-code-display" style="letter-spacing: 2px;">ENERGY99</h2>
+            <h2 id="affiliate-code-display" style="letter-spacing: 2px;"></h2>
             <button class="btn btn-outline" style="padding: 8px; font-size: 12px; width: 60%;" onclick="appLogic.copyCode()">Copy Code</button>
         </div>
 
@@ -394,12 +393,10 @@
             <div class="stat-box">
                 <div class="stat-item">
                     <div class="stat-label">Total Users</div>
-                    <!-- Добавено ID за Real-time обновяване -->
                     <div class="stat-value" id="affiliate-team-size">0</div> 
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Earned from team</div>
-                    <!-- Добавено ID за Real-time обновяване -->
                     <div class="stat-value" id="affiliate-earned">$ 0.00</div>
                 </div>
             </div>
@@ -461,9 +458,9 @@
 <!-- FIREBASE ИНИЦИАЛИЗАЦИЯ -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-    // ДОБАВЕН 'onValue' ЗА РЕАЛНО ВРЕМЕ
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
 
+    // Твоите Firebase данни
     const firebaseConfig = {
         apiKey: "AIzaSyBMktDAVXxUgLbCyBiL9c_l6FDWQ8yqADc",
         authDomain: "energyonemilions.firebaseapp.com",
@@ -477,10 +474,11 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // Правим функциите достъпни за основния скрипт
     window.firebaseDb = db;
     window.firebaseRef = ref;
     window.firebaseSet = set;
-    window.firebaseOnValue = onValue; // Експорт на onValue
+    window.firebaseOnValue = onValue;
 </script>
 
 <script>
@@ -499,7 +497,7 @@
             this.renderPackages();
             if(localStorage.getItem('isLoggedIn') === 'true') {
                 this.loadUserData();
-                this.startDatabaseListener(); // Стартираме слушателя при зареждане
+                this.startDatabaseListener();
                 this.showMainApp();
             }
         },
@@ -547,15 +545,15 @@
 
         validatePassword(password) {
             if(password.length < 6 || password.length > 12) {
-                alert("Password must be between 6 and 12 characters.");
+                alert("Паролата трябва да е между 6 и 12 символа.");
                 return false;
             }
             return true;
         },
 
         maskPhone(phone) {
-            if(phone.length < 8) return phone;
-            return phone.substring(0, 3) + "****" + phone.substring(phone.length - 3);
+            if(!phone || phone.length < 8) return phone;
+            return phone.substring(0, 4) + "****" + phone.substring(phone.length - 3);
         },
 
         async register() {
@@ -565,39 +563,48 @@
             const inviteCode = document.getElementById('reg-invite').value;
             const password = document.getElementById('reg-password').value;
 
-            if(!name || !phone || !password) return alert("Please fill all fields");
+            if(!name || !phone || !password) return alert("Моля, попълнете всички полета!");
             if(!this.validatePassword(password)) return;
 
             const fullPhone = countryCode + phone;
+            const dbKey = fullPhone.replace('+', ''); // Премахваме '+' за чист ключ в базата
             const generatedCode = 'EN' + Math.floor(Math.random()*9000 + 1000);
-            const newUid = Math.floor(Math.random() * 900000 + 100000).toString();
             
             try {
-                const userRef = window.firebaseRef(window.firebaseDb, 'users/' + newUid);
-                await window.firebaseSet(userRef, {
-                    fullName: name,
-                    phone: fullPhone,
-                    inviteCodeUsed: inviteCode || "none",
-                    myCode: generatedCode,
-                    password: password, 
-                    balance: 0,
-                    teamSize: 0,
-                    earnedFromTeam: 0, // ДОБАВЕНО: Спечелени от отбора
-                    createdAt: new Date().toISOString()
-                });
+                // Проверка дали потребителят вече съществува
+                const userRef = window.firebaseRef(window.firebaseDb, 'users/' + dbKey);
                 
-                alert("Account created successfully!");
-                
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userPhone', fullPhone);
-                localStorage.setItem('myCode', generatedCode);
-                localStorage.setItem('uid', newUid);
-                
-                this.loadUserData();
-                this.startDatabaseListener(); // Стартираме слушателя
-                this.showMainApp();
+                window.firebaseOnValue(userRef, async (snapshot) => {
+                    if (snapshot.exists()) {
+                        alert("Този телефонен номер вече е регистриран!");
+                    } else {
+                        // Записване на новия потребител
+                        await window.firebaseSet(userRef, {
+                            fullName: name,
+                            phone: fullPhone,
+                            inviteCodeUsed: inviteCode || "none",
+                            myCode: generatedCode,
+                            password: password, 
+                            balance: 0,
+                            teamSize: 0,
+                            earnedFromTeam: 0,
+                            createdAt: new Date().toISOString()
+                        });
+                        
+                        alert("Регистрацията е успешна!");
+                        
+                        localStorage.setItem('isLoggedIn', 'true');
+                        localStorage.setItem('uid', dbKey);
+                        localStorage.setItem('userPhone', fullPhone);
+                        localStorage.setItem('myCode', generatedCode);
+                        
+                        this.loadUserData();
+                        this.startDatabaseListener();
+                        this.showMainApp();
+                    }
+                }, { onlyOnce: true }); // Важно: Слушаме само веднъж при регистрация
             } catch (error) {
-                alert("Error connecting to database: " + error.message);
+                alert("Грешка при връзка с базата: " + error.message);
             }
         },
 
@@ -606,29 +613,47 @@
             const phone = document.getElementById('login-phone').value;
             const password = document.getElementById('login-password').value;
 
-            if(!phone || !password) return alert("Please enter phone and password");
+            if(!phone || !password) return alert("Въведете телефон и парола!");
 
-            localStorage.setItem('isLoggedIn', 'true');
-            if(!localStorage.getItem('userPhone')) {
-                localStorage.setItem('userPhone', countryCode + phone);
-                localStorage.setItem('myCode', 'EN1029');
-                localStorage.setItem('uid', '102938'); 
+            const fullPhone = countryCode + phone;
+            const dbKey = fullPhone.replace('+', '');
+
+            try {
+                const userRef = window.firebaseRef(window.firebaseDb, 'users/' + dbKey);
+                
+                window.firebaseOnValue(userRef, (snapshot) => {
+                    const data = snapshot.val();
+                    // Проверяваме дали съществува и дали паролата съвпада
+                    if (data && data.password === password) {
+                        localStorage.setItem('isLoggedIn', 'true');
+                        localStorage.setItem('uid', dbKey);
+                        localStorage.setItem('userPhone', data.phone);
+                        localStorage.setItem('myCode', data.myCode);
+                        
+                        this.loadUserData();
+                        this.startDatabaseListener();
+                        this.showMainApp();
+                    } else {
+                        alert("Грешен телефонен номер или парола!");
+                    }
+                }, { onlyOnce: true });
+            } catch (error) {
+                alert("Грешка при вход: " + error.message);
             }
-            
-            this.loadUserData();
-            this.startDatabaseListener(); // Стартираме слушателя след логване
-            this.showMainApp();
         },
 
         logout() {
             localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('uid');
+            localStorage.removeItem('userPhone');
+            localStorage.removeItem('myCode');
             location.reload();
         },
 
         loadUserData() {
-            const phone = localStorage.getItem('userPhone') || '+359 871234567';
-            const code = localStorage.getItem('myCode') || 'ENERGY99';
-            const uid = localStorage.getItem('uid') || '102938';
+            const phone = localStorage.getItem('userPhone') || '';
+            const code = localStorage.getItem('myCode') || '';
+            const uid = localStorage.getItem('uid') || '';
             
             document.getElementById('display-phone').innerText = this.maskPhone(phone);
             document.getElementById('display-my-code').innerText = code;
@@ -636,7 +661,6 @@
             document.getElementById('display-uid').innerText = uid;
         },
 
-        // НОВА ФУНКЦИЯ: Слуша за промени в реално време от базата данни
         startDatabaseListener() {
             const uid = localStorage.getItem('uid');
             if(!uid) return;
@@ -645,35 +669,56 @@
             window.firebaseOnValue(userRef, (snapshot) => {
                 const data = snapshot.val();
                 if(data) {
-                    // Обновяване на баланса във Wallet
                     document.getElementById('wallet-balance').innerText = data.balance !== undefined ? data.balance : "0.00";
                     
-                    // Обновяване на брой поканени хора (Профил и Affiliate)
                     const teamSize = data.teamSize !== undefined ? data.teamSize : "0";
                     document.getElementById('display-team-size').innerText = teamSize;
                     document.getElementById('affiliate-team-size').innerText = teamSize;
                     
-                    // Обновяване на спечелени пари от отбора (Affiliate)
                     const earned = data.earnedFromTeam !== undefined ? data.earnedFromTeam : "0.00";
                     document.getElementById('affiliate-earned').innerText = "$ " + earned;
                 }
             });
         },
 
-        // ОБНОВЕНА ФУНКЦИЯ: Взема предвид въведения крипто адрес
-        withdraw() {
+        async withdraw() {
             const balance = parseFloat(document.getElementById('wallet-balance').innerText);
             const withdrawAddress = document.getElementById('withdraw-address').value;
-            
-            if(!withdrawAddress) {
-                return alert("Please enter your Crypto Wallet Address before withdrawing.");
+            const uid = localStorage.getItem('uid'); 
+            const phone = localStorage.getItem('userPhone');
+
+            if(!withdrawAddress || withdrawAddress.length < 10) {
+                return alert("Моля, въведете валиден крипто адрес!");
             }
 
             if(balance < 100) {
-                alert("Minimum withdrawal is 100 USDT.");
-            } else {
-                alert("Withdrawal requested successfully to address:\n" + withdrawAddress);
-                // Тук по-късно можеш да добавиш код, който изважда баланса в базата
+                return alert("Минималната сума за теглене е 100 USDT.");
+            }
+
+            try {
+                // Създаваме уникален запис в 'withdrawals'
+                const requestId = 'req_' + Date.now();
+                const withdrawRef = window.firebaseRef(window.firebaseDb, 'withdrawals/' + requestId);
+
+                await window.firebaseSet(withdrawRef, {
+                    userPhone: phone,
+                    userKey: uid,
+                    amount: balance,
+                    cryptoAddress: withdrawAddress,
+                    status: "pending",
+                    timestamp: new Date().toISOString()
+                });
+
+                alert("Заявката за теглене е изпратена успешно!\nАдрес: " + withdrawAddress);
+                
+                // Зануляване на баланса на потребителя след теглене
+                const userBalanceRef = window.firebaseRef(window.firebaseDb, 'users/' + uid + '/balance');
+                await window.firebaseSet(userBalanceRef, 0);
+
+                document.getElementById('withdraw-address').value = ''; // Изчистваме полето
+
+            } catch (error) {
+                alert("Възникна грешка при тегленето: " + error.message);
             }
         },
 
@@ -689,17 +734,17 @@
         copyAddress() {
             const addr = document.getElementById('wallet-address-text').innerText.trim();
             navigator.clipboard.writeText(addr);
-            alert("Address copied to clipboard!");
+            alert("Адресът е копиран!");
         },
 
         copyCode() {
             const code = document.getElementById('affiliate-code-display').innerText;
             navigator.clipboard.writeText(code);
-            alert("Invite code copied!");
+            alert("Кодът е копиран!");
         },
 
         confirmSent() {
-            alert("Payment confirmation submitted. Please wait for the system to verify the transaction.");
+            alert("Потвърждението е изпратено. Моля изчакайте системата да верифицира транзакцията.");
             this.closeModal();
         }
     };
